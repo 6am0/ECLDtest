@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知性コンパス - 感情・対話・思考力診断</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+<div class="container">
+    <h1>知性コンパス</h1>
+    <p class="subtitle">E(感情)・C(対話)・L(思考力) - あなたの才能の羅針盤</p>
+
+    <div id="start-screen">
+        <h2>あなたの知性の傾向を診断します。</h2>
+        <button id="start-button">質問を始める</button>
+    </div>
+
+    <form id="ecl-form">
+        <div id="questions-container">
+            </div>
+        <div id="navigation-buttons-container" class="navigation-buttons" style="display: none;">
+            <button type="button" id="prev-btn" style="display: none;">前へ</button>
+            <button type="button" id="next-btn">次へ</button>
+            <button type="button" id="submit-btn" style="display: none;">結果を見る</button>
+        </div>
+    </form>
+
+    <div id="results">
+        <div class="result-header">あなたの知性コンパスタプは...</div>
+        <div id="type-result"></div>
+        <div id="type-description"></div>
+        
+        <div class="score-summary">
+            <div class="score-box" id="e-score">
+                <h3>感情力 (E軸)</h3>
+                <span id="e-total-score" class="score-value"></span>
+                <span id="e-stability" class="stability-indicator"></span>
+            </div>
+            <div class="score-box" id="c-score">
+                <h3>対話力 (C軸)</h3>
+                <span id="c-total-score" class="score-value"></span>
+                <span id="c-stability" class="stability-indicator"></span>
+            </div>
+            <div class="score-box" id="l-score">
+                <h3>思考力 (L軸)</h3>
+                <span id="l-total-score" class="score-value"></span>
+                <span id="l-stability" class="stability-indicator"></span>
+            </div>
+        </div>
+
+        <div id="compatibility-results">
+            <h3>相性の良いタイプ</h3>
+            <p id="good-match-description"></p>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
