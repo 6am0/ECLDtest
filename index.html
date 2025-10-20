@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知性コンパス - 感情・対話・思考力診断</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>知性コンパス - 感情・対話・思考力・判断力診断</title> <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
 <div class="container">
     <h1>知性コンパス</h1>
-    <p class="subtitle">E(感情)・C(対話)・L(思考力) - あなたの才能の羅針盤</p>
-
-    <div id="start-screen">
+    <p class="subtitle">E(感情)・C(対話)・L(思考力)・D(判断力) - あなたの才能の羅針盤</p> <div id="start-screen">
         <h2>あなたの知性の傾向を診断します。</h2>
         <button id="start-button">質問を始める</button>
     </div>
@@ -48,6 +45,11 @@
                 <h3>思考力 (L軸)</h3>
                 <span id="l-total-score" class="score-value"></span>
                 <span id="l-stability" class="stability-indicator"></span>
+            </div>
+             <div class="score-box" id="d-score"> 
+                <h3>判断力 (D軸)</h3>
+                <span id="d-total-score" class="score-value"></span>
+                <span id="d-stability" class="stability-indicator"></span>
             </div>
         </div>
 
