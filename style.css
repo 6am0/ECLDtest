@@ -129,6 +129,38 @@ h2 {
     font-size: 1.1em;
     line-height: 1.6;
 }
+
+/* 5-1. 💡 追加: ボタン選択肢のスタイル */
+.button-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+.button-options button {
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: 500;
+    border: 2px solid #bdc3c7;
+    background-color: #f7f9fb;
+    color: #34495e;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+}
+.button-options button:hover {
+    background-color: #ecf0f1;
+    border-color: #7f8c8d;
+}
+.button-options button.selected {
+    background-color: #0b6cb5; /* D軸の色 */
+    color: white;
+    border-color: #0b6cb5;
+    font-weight: 700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(11, 108, 181, 0.3);
+}
+
 /* 6. カスタムスライダーデザイン */
 .slider-container {
     display: flex;
@@ -253,13 +285,15 @@ input[type="range"]::-webkit-slider-thumb {
 .score-summary {
     display: flex;
     justify-content: space-around;
-    gap: 20px;
+    gap: 10px; /* ボックス間のスペースを少し減らす */
+    flex-wrap: wrap; /* 4つを横並びにするため折り返しを許可 */
     margin-top: 30px;
 }
 .score-box {
     padding: 25px;
     border-radius: 15px;
-    width: 30%;
+    width: 22%; /* 4つが並ぶように調整 */
+    min-width: 150px;
     font-weight: 700;
     text-align: left;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
@@ -273,14 +307,14 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .score-box h3 {
     margin: 0;
-    font-size: 1.1em;
+    font-size: 1.0em; /* 少し小さくする */
     color: #fff;
     opacity: 0.9;
     font-weight: 500;
     margin-bottom: 5px;
 }
 .score-value {
-    font-size: 2.2em;
+    font-size: 2.0em; /* 少し小さくする */
     color: #fff;
     display: inline-block;
     margin-top: 5px;
@@ -290,6 +324,7 @@ input[type="range"]::-webkit-slider-thumb {
 #e-score { background-color: #e74c3c; transition-delay: 0.1s; } 
 #c-score { background-color: #3498db; transition-delay: 0.2s; } 
 #l-score { background-color: #2ecc71; transition-delay: 0.3s; } 
+#d-score { background-color: #9b59b6; transition-delay: 0.4s; } /* 💡 D軸の色を追加 */
 
 /* 9-1. 安定性指標のスタイル */
 .stability-indicator {
@@ -326,7 +361,7 @@ input[type="range"]::-webkit-slider-thumb {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    transition-delay: 0.4s;
+    transition-delay: 0.5s; /* D軸表示の後に遅延させる */
 }
 #compatibility-results.show {
     opacity: 1;
