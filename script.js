@@ -35,7 +35,7 @@ const questions = [
     { id: 30, dim: 'L', sub: 'L3', statement: "間違いや欠陥を指摘することに抵抗感はなく、むしろ必要なことだと考える。", reverse: false }
 ];
 
-// α/γの閾値（0.1単位になったため、閾値も調整を推奨しますが、ここでは前回値を保持）
+// α/γの閾値 
 const CUTOFFS = {
     E: { high: 15, low: -15, max: 40 }, 
     C: { high: 18, low: -18, max: 50 }, 
@@ -118,8 +118,8 @@ function renderQuestions() {
             <div class="statement">Q${q.id}. (${q.sub}) ${q.statement}</div>
             <div class="slider-container">
                 <span class="min-max-label">-5 (全くそう思わない)</span>
-                <input type="range" id="q${q.id}" name="q${q.id}" min="-5" max="5" value="0" step="0.1" oninput="updateScoreLabel(${q.id}, this.value)">
-                <span id="label-q${q.id}" class="score-label">0.0</span>
+                <input type="range" id="q${q.id}" name="q${q.id}" min="-5" max="5" value="0" step="1" oninput="updateScoreLabel(${q.id}, this.value)">
+                <span id="label-q${q.id}" class="score-label">0</span>
                 <span class="min-max-label">+5 (強くそう思う)</span>
             </div>
         `;
@@ -189,10 +189,10 @@ function updateButtons() {
 /**
  * スライダー値のリアルタイム表示を更新する (HTMLからoninputで呼び出される)
  * グローバルスコープに配置が必要
- * 💡 変更点: toFixed(1)で小数点第1位まで表示
+ * 💡 変更点: toFixed(0)で小数点以下を表示しない
  */
 window.updateScoreLabel = function(id, value) {
-    document.getElementById(`label-q${id}`).textContent = parseFloat(value).toFixed(1);
+    document.getElementById(`label-q${id}`).textContent = Math.round(parseFloat(value));
 }
 
 /**
@@ -294,8 +294,8 @@ function calculateResults(event) {
         const input = form.elements[`q${q.id}`];
         if (!input) return;
         
-        // 💡 変更点: parseFloat() で値を取得
-        let score = parseFloat(input.value); 
+        // 💡 変更点: parseInt() で整数値を取得
+        let score = parseInt(input.value); 
         
         if (q.reverse) {
             score = -score;  // リバース項目はスコアを反転
@@ -304,12 +304,6 @@ function calculateResults(event) {
         if (q.dim === 'C') cScore += score;
         if (q.dim === 'L') lScore += score;
     });
-
-    // 小数点以下で誤差が出ないように、最終スコアを四捨五入して小数点第1位までにする
-    eScore = parseFloat(eScore.toFixed(1));
-    cScore = parseFloat(cScore.toFixed(1));
-    lScore = parseFloat(lScore.toFixed(1));
-
 
     // 2. タイプ分類
     const eClass = classifyScore(eScore, 'E');
@@ -325,10 +319,10 @@ function calculateResults(event) {
 
 
     // 4. 結果のDOMへの反映
-    // 💡 変更点: toFixed(1)で小数点第1位まで表示
-    document.getElementById('e-total-score').textContent = eScore.toFixed(1); 
-    document.getElementById('c-total-score').textContent = cScore.toFixed(1);
-    document.getElementById('l-total-score').textContent = lScore.toFixed(1);
+    // 💡 変更点: 整数として表示
+    document.getElementById('e-total-score').textContent = Math.round(eScore); 
+    document.getElementById('c-total-score').textContent = Math.round(cScore);
+    document.getElementById('l-total-score').textContent = Math.round(lScore);
     document.getElementById('e-stability').textContent = `${eClass.toUpperCase()}-${eStability}`;
     document.getElementById('c-stability').textContent = `${cClass.toUpperCase()}-${cStability}`;
     document.getElementById('l-stability').textContent = `${lClass.toUpperCase()}-${lStability}`;
