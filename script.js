@@ -36,37 +36,27 @@ const questions = [
     { id: 29, dim: 'L', sub: 'L2', statement: "勉強や仕事で、まず全体像（目次や構成）を把握しないと細かい作業に入れない。", type: 'slider', reverse: false },
     { id: 30, dim: 'L', sub: 'L3', statement: "間違いや欠陥を指摘することに抵抗感はなく、むしろ必要なことだと考える。", type: 'slider', reverse: false },
     
-    // 💡 D軸の質問 (ボタン形式) を追加
+    // 💡 D軸の質問 (特殊なボタン形式: 視覚判断力) を追加
     { 
-        id: 31, dim: 'D', sub: 'D1', statement: "あなたは今すぐ、以下のどちらかの行動をとる必要があります。どちらを選びますか？", type: 'button', group: "D軸: 判断力 - 決断の傾向",
+        id: 31, dim: 'D', sub: 'D1', statement: "画面中央に出る指示に従って、**できるだけ早く**ボタンを押してください。", type: 'decision', group: "D軸: 判断力 - 迅速な判断力",
         options: [
-            { text: "A: 情報を集め、最適な戦略を立ててから行動する。", value: -5 }, // 低いDスコア (慎重/遅延)
-            { text: "B: 情報を集めずに、すぐに行動し、修正しながら進める。", value: 5 } // 高いDスコア (即断/行動力)
+            { text: "左のボタン", action: 'left' },
+            { text: "右のボタン", action: 'right' }
         ] 
     },
-    { 
-        id: 32, dim: 'D', sub: 'D2', statement: "選択に迷ったとき、あなたはどちらのタイプですか？", type: 'button',
-        options: [
-            { text: "A: 誰かの意見を聞くか、ネットで情報を探す。", value: -5 }, 
-            { text: "B: 自分の過去の経験に基づき、即座に決める。", value: 5 }
-        ] 
-    },
-    { 
-        id: 33, dim: 'D', sub: 'D1', statement: "プロジェクトの締め切りが迫っています。あなたが取る行動は？", type: 'button',
-        options: [
-            { text: "A: 完璧を求めず、今できる最善を尽くして期日までに提出する。", value: 5 }, 
-            { text: "B: 期日を過ぎても、納得できるまで粘り、完成度を追求する。", value: -5 }
-        ] 
-    }
+    // D軸はこれ以上質問を追加せず、この1問（複数回実施）で判断力を測ります。
 ];
 
+// D軸の追加設定
+const DECISION_TRIALS = 5; // D軸の試行回数
+const DECISION_MAX_SCORE = 5 * DECISION_TRIALS; // 最大スコアは 25
 
-// α/γの閾値（D軸を追加）
+// α/γの閾値（D軸を新しいスコアリングに合わせて調整）
 const CUTOFFS = {
     E: { high: 15, low: -15, max: 40 }, 
     C: { high: 18, low: -18, max: 50 }, 
     L: { high: 23, low: -23, max: 60 },
-    D: { high: 10, low: -10, max: 15 } // 💡 D軸の閾値設定
+    D: { high: 15, low: 5, max: DECISION_MAX_SCORE } // 💡 D軸の閾値: 15点以上でα、5点以下でγ
 };
 
 // 安定性の閾値
@@ -75,14 +65,15 @@ const STABILITY_THRESHOLDS = {
     Unstable: 1.5    
 };
 
-// 💡 タイプ分類の説明にD軸を追加（3文字から4文字に拡張）
+// 💡 タイプ分類の説明を新しい表記（軸名＋分類）に合わせて調整
 const typeDescriptions = {
-    'aaaa': { name: 'αααα型: 全能の王 (理想形)', desc: '感情、対話、思考、判断力全てが極めて高く、バランスの取れたリーダータイプです。即断即決と多角的な視点を両立します。' },
-    'aaab': { name: 'αααβ型: 優柔不断な天才', desc: '知性レベルは高いが、判断が中立的で、決断力が弱い傾向があります。' },
-    'aaag': { name: 'αααγ型: 臆病な賢者', desc: '極めて知性は高いが、極度に慎重で、行動に移せない傾向があります。' },
-    'bbbb': { name: 'ββββ型: 均衡の標準人', desc: '全てが中立的で、最も一般的なタイプ。安定性と常識を重視します。' },
-    'ggga': { name: 'γγγα型: 攻撃的な行動家', desc: '知性の基盤は弱いものの、判断力・行動力が突出しており、失敗を恐れません。' },
-    // D軸の説明を追加した他のタイプは省略...
+    'EaCaLaDa': { name: 'EαCαLαDα型: 全能の王 (理想形)', desc: '感情、対話、思考、判断力全てが極めて高い、非常に稀でバランスの取れたリーダータイプです。即断即決と多角的な視点を両立します。' },
+    'EbCbLbDa': { name: 'EβCβLβDα型: 迅速な実行者', desc: '全体的にバランスが取れていますが、特に判断力・決断力が高く、チームのスピードを上げる役割を果たします。' },
+    'EaCbLbDa': { name: 'EαCβLβDα型: 熱血なトップランナー', desc: '感情的配慮がありつつ、決断が速いタイプ。人情味のあるリーダーとして活躍できます。' },
+    'EaCaLaDg': { name: 'EαCαLαDγ型: 優柔不断な賢者', desc: '知性レベルは非常に高いが、極度に慎重で、行動に移せない傾向があります。分析に時間をかけすぎます。' },
+    'EgCgLgDa': { name: 'EγCγLγDα型: 攻撃的な行動家', desc: '感情、対話、思考の基盤は弱いものの、判断力・行動力が突出しており、失敗を恐れません。猪突猛進になる可能性があります。' },
+    'EbCbLbDb': { name: 'EβCβLβDβ型: 均衡の標準人', desc: '全てが中立的で、最も一般的なタイプ。安定性と常識を重視します。' },
+    // 他の組み合わせは汎用的な説明を使用
 };
 
 
@@ -92,7 +83,11 @@ const typeDescriptions = {
 
 let currentQuestionIndex = 0;
 let isTransitioning = false;
-let answers = {}; // 💡 ボタン形式の回答を保持するためのオブジェクト
+let dAxisData = {
+    currentTrial: 0,
+    totalScore: 0,
+    currentInstruction: null // 'left' or 'right'
+};
 
 const startScreen = document.getElementById('start-screen');
 const startButton = document.getElementById('start-button');
@@ -102,6 +97,9 @@ const navButtonsContainer = document.getElementById('navigation-buttons-containe
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const submitBtn = document.getElementById('submit-btn');
+
+// D軸専用DOM要素（一時的なコンテナとして利用）
+let decisionArea = null;
 
 
 // =================================================
@@ -122,7 +120,7 @@ function renderQuestions() {
             currentGroup = q.group;
         }
         
-        qDiv.innerHTML += `<div class="statement">Q${q.id}. (${q.sub}) ${q.statement}</div>`;
+        qDiv.innerHTML += `<div class="statement" id="statement-q${q.id}">Q${q.id}. (${q.sub}) ${q.statement}</div>`;
 
         if (q.type === 'slider') {
             // スライダー形式の質問
@@ -134,26 +132,30 @@ function renderQuestions() {
                     <span class="min-max-label">+5 (強くそう思う)</span>
                 </div>
             `;
-        } else if (q.type === 'button') {
-            // 💡 ボタン形式の質問
-            const optionsHtml = q.options.map(option => `
-                <button type="button" 
-                        data-question-id="q${q.id}" 
-                        data-value="${option.value}"
-                        onclick="handleButtonSelect(this, ${q.id}, ${option.value})">
-                    ${option.text}
-                </button>
-            `).join('');
-            
-            qDiv.innerHTML += `<div class="button-options" id="options-q${q.id}">${optionsHtml}</div>`;
-            
-            // 隠しフィールドをフォームに追加し、値を保持
+            // 隠しフィールドは不要（range input自体がフォームデータになるため）
+
+        } else if (q.type === 'decision') {
+            // 💡 D軸の特殊な質問（ボタン判断）
+            qDiv.innerHTML += `
+                <div id="decision-area-q${q.id}" style="text-align: center; margin-top: 20px;">
+                    <div id="instruction-display" style="font-size: 2em; font-weight: 700; height: 50px; color: #0b6cb5; margin-bottom: 20px;">準備中...</div>
+                    <div class="button-options" id="options-q${q.id}" style="flex-direction: row; justify-content: space-around;">
+                        <button type="button" data-action="left" onclick="handleDecisionClick('left')" style="width: 45%; padding: 20px;">左のボタン</button>
+                        <button type="button" data-action="right" onclick="handleDecisionClick('right')" style="width: 45%; padding: 20px;">右のボタン</button>
+                    </div>
+                    <div id="trial-info" style="margin-top: 15px; color: #5d6d7e;">試行回数: 0 / ${DECISION_TRIALS}</div>
+                </div>
+            `;
+            // 隠しフィールドをフォームに追加し、最終スコアを保持
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
             hiddenInput.id = `q${q.id}`;
             hiddenInput.name = `q${q.id}`;
-            hiddenInput.value = ''; // 初期値は空
+            hiddenInput.value = '0'; // D軸の最終スコア
             qDiv.appendChild(hiddenInput);
+            
+            // 参照用にDOM要素を保持
+            decisionArea = document.getElementById(`decision-area-q${q.id}`);
         }
         
         questionsContainer.appendChild(qDiv);
@@ -163,23 +165,88 @@ function renderQuestions() {
 }
 
 /**
- * ボタンがクリックされた時の処理 (グローバルスコープ)
- * @param {HTMLElement} button - クリックされたボタン要素
- * @param {number} qId - 質問ID
- * @param {number} value - スコア値
+ * D軸の試行を開始/実行する
  */
-window.handleButtonSelect = function(button, qId, value) {
-    const parent = button.closest('.button-options');
-    // 全てのボタンから選択クラスを削除
-    parent.querySelectorAll('button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    // クリックされたボタンに選択クラスを追加
-    button.classList.add('selected');
+function startDecisionTrial() {
+    if (!decisionArea) return;
     
-    // 隠しフィールドに値をセット
-    document.getElementById(`q${qId}`).value = value;
-};
+    const display = document.getElementById('instruction-display');
+    const info = document.getElementById('trial-info');
+    const statement = document.getElementById(`statement-q31`);
+
+    if (dAxisData.currentTrial >= DECISION_TRIALS) {
+        // 全ての試行が終了
+        display.textContent = "試行完了";
+        display.style.color = '#2ecc71';
+        info.textContent = `最終スコア: ${dAxisData.totalScore} / ${DECISION_MAX_SCORE}`;
+        statement.textContent = "回答が完了しました。次へ進んでください。";
+        // 最終スコアをフォームに保存
+        document.getElementById(`q31`).value = dAxisData.totalScore;
+        nextBtn.disabled = false;
+        return;
+    }
+    
+    dAxisData.currentTrial++;
+    info.textContent = `試行回数: ${dAxisData.currentTrial} / ${DECISION_TRIALS}`;
+
+    // 💡 50%の確率で 'left' または 'right' の指示をランダムに決定
+    const instruction = Math.random() < 0.5 ? 'left' : 'right';
+    dAxisData.currentInstruction = instruction;
+
+    let color = '';
+    let instructionText = '';
+    
+    // 💡 視覚的な指示と動作をリンクさせる（例：赤/青）
+    if (instruction === 'right') {
+        instructionText = '右のボタンを押してください';
+        color = '#3498db'; // 青
+    } else {
+        instructionText = '左のボタンを押してください';
+        color = '#e74c3c'; // 赤
+    }
+    
+    // 表示と同時にタイマーを開始
+    display.textContent = instructionText;
+    display.style.color = color;
+    dAxisData.startTime = performance.now();
+}
+
+/**
+ * D軸のボタンがクリックされた時の処理 (グローバルスコープ)
+ * @param {string} action - 'left' or 'right'
+ */
+window.handleDecisionClick = function(action) {
+    if (dAxisData.currentTrial >= DECISION_TRIALS || !dAxisData.startTime) {
+        return; // 試行が終了しているか、まだ開始されていない
+    }
+
+    const endTime = performance.now();
+    const reactionTimeMs = endTime - dAxisData.startTime;
+    const isCorrect = action === dAxisData.currentInstruction;
+    
+    let score = 0;
+
+    if (isCorrect) {
+        // 💡 正解した場合、反応時間に応じてスコアを加算 (速いほど高い)
+        // 例: 500ms未満: +5, 500-1000ms: +3, 1000ms以上: +1
+        if (reactionTimeMs < 500) {
+            score = 5;
+        } else if (reactionTimeMs < 1000) {
+            score = 3;
+        } else {
+            score = 1;
+        }
+    } else {
+        // 💡 不正解の場合、スコアは加算しない (0点)
+        score = 0;
+    }
+
+    dAxisData.totalScore += score;
+    dAxisData.startTime = null; // タイマーをリセット
+
+    // 次の試行に進む (遅延させて視覚的なフィードバックを与える)
+    setTimeout(startDecisionTrial, 500); 
+}
 
 
 /**
@@ -199,14 +266,18 @@ function showQuestion(index, direction) {
         prevQuestion.style.opacity = '0';
         prevQuestion.style.transform = (direction === 'next') ? 'translateX(-100%)' : 'translateX(100%)';
         prevQuestion.classList.remove('active');
+        // D軸の試行を停止
+        if (questions[currentQuestionIndex].dim === 'D') {
+             dAxisData.startTime = null; 
+        }
     }
 
-    // アニメーション完了を待ってから次の質問を表示
     setTimeout(() => {
+        // ... (アニメーションの処理は省略) ...
+
         if (prevQuestion) {
             prevQuestion.style.visibility = 'hidden';
             prevQuestion.style.position = 'absolute';
-            // スタイルをリセットして次のトランジションに備える
             prevQuestion.style.transform = 'translateX(0)'; 
         }
         
@@ -215,56 +286,54 @@ function showQuestion(index, direction) {
         nextQuestion.style.opacity = '1';
         nextQuestion.style.transform = 'translateX(0)';
         nextQuestion.style.visibility = 'visible';
-        nextQuestion.style.position = 'relative'; // Active要素はフローに戻す
+        nextQuestion.style.position = 'relative';
 
         currentQuestionIndex = index;
         updateButtons();
         isTransitioning = false;
+        
+        // 💡 D軸の質問に到達したら試行を開始
+        if (questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
+            nextBtn.disabled = true; // 試行中は次へ進めないようにする
+            startDecisionTrial();
+        } else if (questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial >= DECISION_TRIALS) {
+             nextBtn.disabled = false; // 試行が完了していれば次へ進める
+        } else {
+            nextBtn.disabled = false;
+        }
+
     }, 500);
 }
 
-/**
- * ナビゲーションボタンの表示状態を更新する
- */
+// ... (updateButtons, updateScoreLabel, determineStability 関数は省略、変更なし) ...
 function updateButtons() {
     navButtonsContainer.style.display = 'flex';
     prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
     
-    if (currentQuestionIndex === questions.length - 1) {
+    // 💡 D軸の試行中は「次へ」を無効にする
+    if (questions[currentQuestionIndex] && questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
+        nextBtn.style.display = 'block';
+        nextBtn.disabled = true; 
+        submitBtn.style.display = 'none';
+    } else if (currentQuestionIndex === questions.length - 1) {
         nextBtn.style.display = 'none';
         submitBtn.style.display = 'block';
     } else {
         nextBtn.style.display = 'block';
+        nextBtn.disabled = false;
         submitBtn.style.display = 'none';
     }
 }
-
-/**
- * スライダー値のリアルタイム表示を更新する (HTMLからoninputで呼び出される)
- * グローバルスコープに配置が必要
- */
 window.updateScoreLabel = function(id, value) {
     document.getElementById(`label-q${id}`).textContent = Math.round(parseFloat(value));
 }
 
-/**
- * スコアを分類 (α, β, γ)
- * @param {number} score - 軸の合計スコア
- * @param {string} axis - 軸 ('E', 'C', 'L', 'D')
- * @returns {string} - 'a', 'b', or 'g'
- */
 const classifyScore = (score, axis) => {
-    if (score >= CUTOFFS[axis].high) return 'a';  // Alpha (High)
-    if (score <= CUTOFFS[axis].low) return 'g';   // Gamma (Low)
-    return 'b';                                   // Beta (Middle)
+    if (score >= CUTOFFS[axis].high) return 'α';  // Alpha (High)
+    if (score <= CUTOFFS[axis].low) return 'γ';   // Gamma (Low)
+    return 'β';                                   // Beta (Middle)
 };
 
-/**
- * 軸の安定性を判定する
- * @param {number} score - 軸の合計スコア
- * @param {string} axis - 軸 ('E', 'C', 'L', 'D')
- * @returns {string} - 'Stable', 'Intermediate', or 'Unstable'
- */
 function determineStability(score, axis) {
     const { high } = CUTOFFS[axis];
     const absScore = Math.abs(score);
@@ -280,22 +349,18 @@ function determineStability(score, axis) {
     
     return 'Intermediate';
 }
-
-
-/**
- * 相性の良いタイプを判定する
- */
+// ... (getGoodMatches 関数は省略, 汎用的な内容で継続) ...
 function getGoodMatches(e, c, l, d) {
     let matches = [];
     
-    // 補完性による相性 (γ軸を補う)
-    // 4軸対応のため、タイプキーを4文字に修正する必要があります (例: typeDescriptions[`a${c}${l}${d}`].name)
-    // 💡ここでは簡略化し、最も汎用性の高い「ββββ型」のみ提示します。
-    if (!(e === 'b' && c === 'b' && l === 'b' && d === 'b')) {
-         matches.push({ name: typeDescriptions['bbbb'].name, reason: `あなたと補完し合えるバランスタイプで、お互いの弱点をカバーし合えます。` });
+    // 💡 タイプキーをEβCβLβDβ型のように構成
+    const typeKey = `E${e}C${c}L${l}D${d}`;
+    
+    // 簡略化し、最も汎用性の高い「EβCβLβDβ型」のみ提示
+    if (typeKey !== 'EβCβLβDβ') {
+         matches.push({ name: typeDescriptions['EbCbLbDb'].name, reason: `あなたと補完し合えるバランスタイプで、お互いの弱点をカバーし合えます。` });
     }
     
-    // 重複を削除して返却
     const uniqueMatches = Array.from(new Set(matches.map(m => m.name)))
         .map(name => {
             return matches.find(m => m.name === name);
@@ -314,14 +379,14 @@ function calculateResults(event) {
     let eScore = 0;
     let cScore = 0;
     let lScore = 0;
-    let dScore = 0; // 💡 Dスコアの初期化
+    let dScore = 0; 
     const form = document.getElementById('ecl-form');
     const resultsEl = document.getElementById('results');
 
     // 1. スコアの集計
     questions.forEach(q => {
         const input = form.elements[`q${q.id}`];
-        if (!input) return;
+        if (!input || input.value === '') return; // 未回答の質問はスキップ
         
         let score = parseInt(input.value); 
         
@@ -332,7 +397,7 @@ function calculateResults(event) {
         if (q.dim === 'E') eScore += score;
         if (q.dim === 'C') cScore += score;
         if (q.dim === 'L') lScore += score;
-        if (q.dim === 'D') dScore += score; // 💡 Dスコアの加算
+        if (q.dim === 'D') dScore += score; 
     });
 
 
@@ -340,36 +405,37 @@ function calculateResults(event) {
     const eClass = classifyScore(eScore, 'E');
     const cClass = classifyScore(cScore, 'C');
     const lClass = classifyScore(lScore, 'L');
-    const dClass = classifyScore(dScore, 'D'); // 💡 D軸の分類
-    const typeKey = `${eClass}${cClass}${lClass}${dClass}`; // 💡 4文字のタイプキー
+    const dClass = classifyScore(dScore, 'D'); 
+    
+    // 💡 新しいタイプ表記
+    const typeKey = `E${eClass}C${cClass}L${lClass}D${dClass}`; 
 
-    // 既存の説明がない場合は汎用的な説明を使用
     const result = typeDescriptions[typeKey] || { 
-        name: `${eClass.toUpperCase()}${cClass.toUpperCase()}${lClass.toUpperCase()}${dClass.toUpperCase()}型`, 
-        desc: `あなたは感情、対話、思考、判断力において、それぞれ ${eClass.toUpperCase()} / ${cClass.toUpperCase()} / ${lClass.toUpperCase()} / ${dClass.toUpperCase()} の傾向を持っています。`
+        name: typeKey + '型', 
+        desc: `あなたは感情 (${eClass})、対話 (${cClass})、思考 (${lClass})、判断力 (${dClass}) のユニークな組み合わせを持っています。`
     };
 
     // 3. 安定性判定
     const eStability = determineStability(eScore, 'E');
     const cStability = determineStability(cScore, 'C');
     const lStability = determineStability(lScore, 'L');
-    const dStability = determineStability(dScore, 'D'); // 💡 D軸の安定性
+    const dStability = determineStability(dScore, 'D'); 
 
     // 4. 結果のDOMへの反映
     document.getElementById('e-total-score').textContent = Math.round(eScore); 
     document.getElementById('c-total-score').textContent = Math.round(cScore);
     document.getElementById('l-total-score').textContent = Math.round(lScore);
-    document.getElementById('d-total-score').textContent = Math.round(dScore); // 💡 Dスコアの表示
+    document.getElementById('d-total-score').textContent = Math.round(dScore); 
     
-    document.getElementById('e-stability').textContent = `${eClass.toUpperCase()}-${eStability}`;
-    document.getElementById('c-stability').textContent = `${cClass.toUpperCase()}-${cStability}`;
-    document.getElementById('l-stability').textContent = `${lClass.toUpperCase()}-${lStability}`;
-    document.getElementById('d-stability').textContent = `${dClass.toUpperCase()}-${dStability}`; // 💡 D軸の安定性表示
+    document.getElementById('e-stability').textContent = `E${eClass}-${eStability}`; // 軸名を追加
+    document.getElementById('c-stability').textContent = `C${cClass}-${cStability}`;
+    document.getElementById('l-stability').textContent = `L${lClass}-${lStability}`;
+    document.getElementById('d-stability').textContent = `D${dClass}-${dStability}`;
     
     document.getElementById('e-stability').className = `stability-indicator ${eStability}`;
     document.getElementById('c-stability').className = `stability-indicator ${cStability}`;
     document.getElementById('l-stability').className = `stability-indicator ${lStability}`;
-    document.getElementById('d-stability').className = `stability-indicator ${dStability}`; // 💡 D軸のスタイル適用
+    document.getElementById('d-stability').className = `stability-indicator ${dStability}`;
 
 
     document.getElementById('type-result').textContent = result.name;
@@ -393,7 +459,6 @@ function calculateResults(event) {
         resultsEl.classList.add('show');
         document.querySelectorAll('.score-box').forEach(box => box.classList.add('show'));
         document.getElementById('compatibility-results').classList.add('show');
-        // 結果画面の先頭にスクロール
         resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
     }, 50);
 }
@@ -414,6 +479,7 @@ startButton.addEventListener('click', () => {
 
 // 2. 質問ナビゲーション (次へ)
 nextBtn.addEventListener('click', () => {
+    // D軸の試行が終わっていない場合はボタンがdisabledになっているので処理は不要
     if (currentQuestionIndex < questions.length - 1) {
         showQuestion(currentQuestionIndex + 1, 'next');
     }
