@@ -1,2 +1,1 @@
-page↓
-https://6am0.github.io/ECLtest/
+githubpage:https://6am0.github.io/ECLDtest/
