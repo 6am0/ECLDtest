@@ -62,17 +62,19 @@ const STABILITY_THRESHOLDS = {
 };
 
 const typeDescriptions = {
+    // タイプ名からECLDを削除した表記
     'αααα': { name: 'αααα型: 全能の王 (理想形)', desc: '感情、対話、思考、判断力全てが極めて高い、非常に稀でバランスの取れたリーダータイプです。即断即決と多角的な視点を両立します。' },
     'βββα': { name: 'βββα型: 迅速な実行者', desc: '全体的にバランスが取れていますが、特に判断力・決断力が高く、チームのスピードを上げる役割を果たします。' },
     'αββα': { name: 'αββα型: 熱血なトップランナー', desc: '感情的配慮がありつつ、決断が速いタイプ。人情味のあるリーダーとして活躍できます。' },
     'αααγ': { name: 'αααγ型: 優柔不断な賢者', desc: '知性レベルは非常に高いが、極度に慎重で、行動に移せない傾向があります。分析に時間をかけすぎます。' },
     'γγγα': { name: 'γγγα型: 攻撃的な行動家', desc: '感情、対話、思考の基盤は弱いものの、判断力・行動力が突出しており、失敗を恐れません。猪突猛進になる可能性があります。' },
     'ββββ': { name: 'ββββ型: 均衡の標準人', desc: '全てが中立的で、最も一般的なタイプ。安定性と常識を重視します。' },
+    // その他のタイプも必要に応じて追加...
 };
 
 
 // =================================================
-// DOM要素の取得と変数定義 (初期値はnull/未定義でOK)
+// DOM要素の取得と変数定義
 // =================================================
 
 let currentQuestionIndex = 0;
@@ -84,18 +86,14 @@ let dAxisData = {
     startTime: null 
 };
 
-// これらはdocument.addEventListener('DOMContentLoaded'後に定義されます
-const startScreen = document.getElementById('start-screen');
-const startButton = document.getElementById('start-button');
-const eclForm = document.getElementById('ecl-form');
-// 💡 修正: これらはグローバル変数として宣言しますが、値の取得はDOMReady後に行われます
+// HTML要素を参照するためのグローバル変数（DOMContentLoadedで値が設定されます）
 let questionsContainer; 
 let navButtonsContainer; 
 let prevBtn;
 let nextBtn;
 let submitBtn;
-
 let decisionArea = null;
+
 
 // =================================================
 // 関数定義
@@ -105,7 +103,7 @@ let decisionArea = null;
  * 質問フォームをDOMに描画する
  */
 function renderQuestions() {
-    // 💡 修正: DOM要素をここで確実に取得する
+    // DOM要素をここで確実に取得する
     questionsContainer = document.getElementById('questions-container');
     navButtonsContainer = document.getElementById('navigation-buttons-container');
     prevBtn = document.getElementById('prev-btn');
@@ -234,8 +232,7 @@ function startDecisionTrial() {
     let color = '';
     let instructionText = '';
     
-    // 指示テキストを色名のみにする
-    // ルール：青→右、赤→左
+    // 指示テキストを色名のみにする (青→右、赤→左)
     if (instruction === 'right') {
         instructionText = '【青】'; 
         color = '#3498db'; // 青
@@ -268,9 +265,7 @@ window.handleDecisionClick = function(action) {
     const endTime = performance.now();
     const reactionTimeMs = endTime - dAxisData.startTime;
     
-    // 正答判定:
-    // ユーザーが 'right' を押し、指示が 'right' (青) の場合、または
-    // ユーザーが 'left' を押し、指示が 'left' (赤) の場合
+    // 正答判定
     const isCorrect = (action === dAxisData.currentInstruction);
     
     let score = 0;
@@ -368,36 +363,42 @@ function showQuestion(index, direction) {
 
 
 function updateButtons() {
-    // 💡 修正: navButtonsContainerが取得済みであることを前提とする
-    if(navButtonsContainer) navButtonsContainer.style.display = 'flex';
-    if(prevBtn) prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
+    // ボタン要素が取得済みであることを確認
+    if(!navButtonsContainer || !prevBtn || !nextBtn || !submitBtn) return;
+    
+    navButtonsContainer.style.display = 'flex';
+    prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
     
     if (questions[currentQuestionIndex] && questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
         // D軸の質問で、試行が未完了の場合は次へを無効化
-        if(nextBtn) nextBtn.style.display = 'block';
-        if(nextBtn) nextBtn.disabled = true; 
-        if(submitBtn) submitBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+        nextBtn.disabled = true; 
+        submitBtn.style.display = 'none';
     } else if (currentQuestionIndex === questions.length - 1) {
         // 最後の質問
-        if(nextBtn) nextBtn.style.display = 'none';
-        if(submitBtn) submitBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
     } else {
         // 途中の質問
-        if(nextBtn) nextBtn.style.display = 'block';
-        if(nextBtn) nextBtn.disabled = false;
-        if(submitBtn) submitBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+        nextBtn.disabled = false;
+        submitBtn.style.display = 'none';
     }
 }
+
+// スライダーのスコア表示更新
 window.updateScoreLabel = function(id, value) {
     document.getElementById(`label-q${id}`).textContent = Math.round(parseFloat(value));
 }
 
+// α/β/γの分類ロジック
 const classifyScore = (score, axis) => {
     if (score >= CUTOFFS[axis].high) return 'α';
     if (score <= CUTOFFS[axis].low) return 'γ';
     return 'β';
 };
 
+// 安定性判定ロジック
 function determineStability(score, axis) {
     if (axis === 'D') {
         const maxScore = CUTOFFS.D.max;
@@ -424,6 +425,7 @@ function determineStability(score, axis) {
 }
 
 
+// 相性判定ロジック
 function getGoodMatches(e, c, l, d) {
     let matches = [];
     
@@ -469,6 +471,7 @@ function calculateResults(event) {
     // 1. スコアの集計
     questions.forEach(q => {
         const input = form.elements[`q${q.id}`];
+        
         // D軸のスコアはhidden inputから取得
         if (q.dim === 'D') {
             dScore = parseInt(input ? input.value : '0');
@@ -552,48 +555,36 @@ function calculateResults(event) {
 }
 
 // =================================================
-// イベントリスナー
-// =================================================
-
-// 1. 開始ボタンの処理
-// 💡 修正: startScreenとeclFormはグローバルで定義済みのDOM要素（HTML側でIDが付与されている前提）
-const startBtn = document.getElementById('start-button');
-const startScrn = document.getElementById('start-screen');
-const formEl = document.getElementById('ecl-form');
-
-if (startBtn && startScrn && formEl) {
-    startBtn.addEventListener('click', () => {
-        startScrn.style.opacity = '0';
-        setTimeout(() => {
-            startScrn.style.display = 'none';
-            formEl.style.display = 'block'; 
-            
-            // 描画が完了してから少し待ってクラスを追加し、スムーズに表示
-            setTimeout(() => {
-                formEl.classList.add('show');
-                formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 10);
-        }, 500);
-    });
-}
-
-
-// 2. 質問ナビゲーション (次へ)
-// 3. 質問ナビゲーション (前へ)
-// 4. 結果表示ボタン
-// これらのイベントリスナーは renderQuestions 実行後に確実にDOM要素が取得されてから動作するように調整が必要です。
-// renderQuestionsの最後に navigator 関連のイベントリスナーを配置します。
-
-
-// =================================================
-// 初期化
+// イベントリスナーと初期化
 // =================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // 質問フォームの生成と初期表示
     renderQuestions();
     
-    // ナビゲーションボタンのイベントリスナーをここで設定（renderQuestions内でDOM要素が確実に取得された後）
+    // DOM要素の参照
+    const startBtn = document.getElementById('start-button');
+    const startScrn = document.getElementById('start-screen');
+    const formEl = document.getElementById('ecl-form');
+
+    // 1. 開始ボタンの処理
+    if (startBtn && startScrn && formEl) {
+        startBtn.addEventListener('click', () => {
+            startScrn.style.opacity = '0';
+            setTimeout(() => {
+                startScrn.style.display = 'none';
+                formEl.style.display = 'block'; 
+                
+                // 描画が完了してから少し待ってクラスを追加し、スムーズに表示
+                setTimeout(() => {
+                    formEl.classList.add('show');
+                    formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 10);
+            }, 500);
+        });
+    }
+
+    // 2. 質問ナビゲーション (次へ)
     if(nextBtn) {
         nextBtn.addEventListener('click', () => {
             if (currentQuestionIndex < questions.length - 1) {
@@ -601,6 +592,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // 3. 質問ナビゲーション (前へ)
     if(prevBtn) {
         prevBtn.addEventListener('click', () => {
             if (currentQuestionIndex > 0) {
@@ -608,6 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // 4. 結果表示ボタン
     if(submitBtn) {
         submitBtn.addEventListener('click', calculateResults);
     }
