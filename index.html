@@ -3,67 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知性コンパス - 感情・対話・思考力・判断力診断</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
+    <title>ECLD 思考特性診断</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-<div class="container">
-    <h1>知性コンパス</h1>
-    <p class="subtitle">E(感情)・C(対話)・L(思考力)・D(判断力) - あなたの才能の羅針盤</p>
+<body class="light-mode">
     
-    <div id="start-screen">
-        <h2>あなたの知性の傾向を診断します。</h2>
-        <button id="start-button">質問を始める</button>
+    <button id="dark-mode-toggle" class="mode-toggle-btn" aria-label="ダークモードに切り替え">
+        🌙
+    </button>
+
+    <div class="main-container">
+        <header id="start-screen" class="screen active">
+            <h1 class="fade-in-up">思考特性診断</h1>
+            <p class="fade-in-up delay-1">ECLDモデルに基づき、あなたの思考・判断の傾向を詳細に診断します。</p>
+            <button id="start-button" class="btn primary fade-in-up delay-2">質問を始める</button>
+        </header>
+
+        <form id="ecl-form" class="screen">
+            <div id="questions-container" class="question-list">
+                </div>
+            
+            <div id="navigation-buttons-container" class="nav-buttons-container">
+                <button type="button" id="prev-btn" class="btn secondary">戻る</button>
+                <button type="button" id="next-btn" class="btn primary">次へ</button>
+                <button type="submit" id="submit-btn" class="btn primary submit-btn">結果を見る</button>
+            </div>
+        </form>
+
+        <section id="results" class="screen results-screen">
+            <h2>診断結果</h2>
+            <div class="type-summary-card fade-in-up delay-1">
+                <p>あなたの総合タイプは：</p>
+                <h3 id="type-result" class="result-type-title"></h3>
+                <p id="type-description" class="result-description"></p>
+            </div>
+
+            <h3>詳細スコアと安定性</h3>
+            <div class="score-grid">
+                <div class="score-box fade-in-up delay-2" data-axis="E">
+                    <h4>E軸 (感情力)</h4>
+                    <div class="score-value"><span id="e-total-score">0</span> pts</div>
+                    <div id="e-stability" class="stability-indicator"></div>
+                </div>
+                <div class="score-box fade-in-up delay-3" data-axis="C">
+                    <h4>C軸 (対話力)</h4>
+                    <div class="score-value"><span id="c-total-score">0</span> pts</div>
+                    <div id="c-stability" class="stability-indicator"></div>
+                </div>
+                <div class="score-box fade-in-up delay-4" data-axis="L">
+                    <h4>L軸 (思考力)</h4>
+                    <div class="score-value"><span id="l-total-score">0</span> pts</div>
+                    <div id="l-stability" class="stability-indicator"></div>
+                </div>
+                <div class="score-box fade-in-up delay-5" data-axis="D">
+                    <h4>D軸 (判断力)</h4>
+                    <div class="score-value"><span id="d-total-score">0</span> pts</div>
+                    <div id="d-stability" class="stability-indicator"></div>
+                </div>
+            </div>
+
+            <div id="compatibility-results" class="compatibility-card fade-in-up delay-6">
+                <h3>🤝 相性の良いタイプ</h3>
+                <div id="good-match-description"></div>
+            </div>
+        </section>
     </div>
 
-    <form id="ecl-form">
-        <div id="questions-container" class="question-list"> 
-            </div>
-        
-        <div id="navigation-buttons-container" class="navigation-buttons" style="display: none;">
-            <button type="button" id="prev-btn" style="display: none;">前へ</button>
-            <button type="button" id="next-btn">次へ</button>
-            <button type="button" id="submit-btn" style="display: none;">結果を見る</button>
-        </div>
-    </form>
-
-    <div id="results" style="display: none;"> <div class="result-header">あなたの知性コンパスタプは...</div>
-        <div id="type-result"></div>
-        <div id="type-description"></div>
-        
-        <div class="score-summary">
-            <div class="score-box" id="e-score">
-                <h3>感情力 (E軸)</h3>
-                <span id="e-total-score" class="score-value"></span>
-                <span id="e-stability" class="stability-indicator"></span>
-            </div>
-            <div class="score-box" id="c-score">
-                <h3>対話力 (C軸)</h3>
-                <span id="c-total-score" class="score-value"></span>
-                <span id="c-stability" class="stability-indicator"></span>
-            </div>
-            <div class="score-box" id="l-score">
-                <h3>思考力 (L軸)</h3>
-                <span id="l-total-score" class="score-value"></span>
-                <span id="l-stability" class="stability-indicator"></span>
-            </div>
-             <div class="score-box" id="d-score"> 
-                <h3>判断力 (D軸)</h3>
-                <span id="d-total-score" class="score-value"></span>
-                <span id="d-stability" class="stability-indicator"></span>
-            </div>
-        </div>
-
-        <div id="compatibility-results">
-            <h3>相性の良いタイプ</h3>
-            <p id="good-match-description"></p>
-        </div>
-    </div>
-</div>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
