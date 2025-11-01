@@ -32,7 +32,7 @@
 
 * {
     box-sizing: border-box;
-    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 body {
@@ -87,18 +87,24 @@ h1, h2, h3, h4 {
 }
 
 /* ==================================== */
-/* 3. ボタンとフォーム要素 */
+/* 3. ボタンとフォーム要素 (強化されたボタンCSS) */
 /* ==================================== */
 
 .btn {
+    /* 💡 デフォルトのブラウザスタイルをリセット */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none; 
+    
     padding: 12px 25px;
-    border: none;
     border-radius: 8px;
     font-size: 1.05em;
     cursor: pointer;
     font-weight: 700;
     transition: all 0.2s ease;
     margin: 5px;
+    text-align: center;
 }
 
 .btn.primary {
@@ -106,7 +112,7 @@ h1, h2, h3, h4 {
     color: white;
 }
 
-.btn.primary:hover {
+.btn.primary:hover:not(:disabled) {
     background-color: var(--color-primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px var(--color-shadow);
@@ -118,10 +124,17 @@ h1, h2, h3, h4 {
     border: 1px solid var(--color-border);
 }
 
-.btn.secondary:hover {
+.btn.secondary:hover:not(:disabled) {
     background-color: var(--color-secondary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* ナビゲーション */
@@ -133,11 +146,15 @@ h1, h2, h3, h4 {
 }
 
 .submit-btn {
-    margin-left: auto; /* 次へボタンがない時に右端に寄せる */
+    margin-left: auto; 
 }
 
 /* ダークモード切り替えボタン */
 .mode-toggle-btn {
+    /* 💡 ここもリセットを強化 */
+    appearance: none;
+    border: none;
+    
     position: fixed;
     top: 20px;
     right: 20px;
@@ -150,6 +167,7 @@ h1, h2, h3, h4 {
     cursor: pointer;
     z-index: 1000;
     box-shadow: 0 2px 5px var(--color-shadow);
+    line-height: 1; /* アイコンを中央に寄せるため */
 }
 
 /* ==================================== */
@@ -160,7 +178,7 @@ h1, h2, h3, h4 {
     padding: 20px 0;
     border-bottom: 1px dashed var(--color-border);
     margin-bottom: 20px;
-    display: none; /* JSで管理 */
+    display: none; 
     opacity: 0;
     transform: translateX(10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -231,7 +249,7 @@ input[type=range]::-webkit-slider-thumb {
     background: var(--color-background);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 5px var(--color-shadow);
 }
 
 #instruction-display {
@@ -253,6 +271,11 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .button-options button {
+    /* 💡 D軸ボタンのスタイルもリセットして強化 */
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    
     width: 48%;
     padding: 20px;
     font-size: 1.1em;
@@ -260,6 +283,14 @@ input[type=range]::-webkit-slider-thumb {
     border-radius: 10px;
     background-color: var(--color-primary);
     color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button-options button:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--color-shadow);
 }
 
 /* ==================================== */
@@ -297,10 +328,10 @@ input[type=range]::-webkit-slider-thumb {
 .score-box {
     padding: 20px;
     border-radius: 10px;
-    background-color: var(--color-background);
+    background-color: var(--color-card-background);
     box-shadow: 0 4px 15px var(--color-shadow);
     text-align: center;
-    opacity: 0; /* JSでアニメーション制御 */
+    opacity: 0; 
     transform: translateY(10px);
 }
 
@@ -343,7 +374,7 @@ input[type=range]::-webkit-slider-thumb {
 .compatibility-card {
     margin-top: 30px;
     padding: 25px;
-    background-color: var(--color-background);
+    background-color: var(--color-card-background);
     border-radius: 10px;
     box-shadow: 0 4px 15px var(--color-shadow);
     opacity: 0;
