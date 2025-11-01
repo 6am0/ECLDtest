@@ -85,7 +85,6 @@ h1 {
     transition: opacity 1.0s ease-in;
 }
 #ecl-form.show {
-    display: block;
     opacity: 1;
 }
 
@@ -101,27 +100,19 @@ h2 {
     border-left: 6px solid #0b6cb5;
     border-radius: 4px;
 }
-.question-group {
-    position: relative;
-    overflow: hidden;
-    min-height: 250px;
-}
+
+/* 修正: 質問表示をシンプルに */
 .question {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
     padding: 15px 0;
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    display: none; /* 非アクティブな質問は非表示に */
+    transition: opacity 0.3s ease;
 }
 .question.active {
     opacity: 1;
-    visibility: visible;
-    position: relative;
-    transform: translateY(0);
+    display: block; /* アクティブな質問を表示 */
 }
+
 .statement {
     font-weight: 500;
     margin-bottom: 15px;
@@ -130,7 +121,7 @@ h2 {
     line-height: 1.6;
 }
 
-/* 5-1. 💡 追加: ボタン選択肢のスタイル */
+/* 5-1. ボタン選択肢のスタイル (D軸) */
 .button-options {
     display: flex;
     flex-direction: column;
@@ -152,15 +143,6 @@ h2 {
     background-color: #ecf0f1;
     border-color: #7f8c8d;
 }
-.button-options button.selected {
-    background-color: #0b6cb5; /* D軸の色 */
-    color: white;
-    border-color: #0b6cb5;
-    font-weight: 700;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(11, 108, 181, 0.3);
-}
-
 /* 6. カスタムスライダーデザイン */
 .slider-container {
     display: flex;
@@ -218,6 +200,7 @@ input[type="range"]::-webkit-slider-thumb {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    gap: 10px; /* ボタン間のスペースを追加 */
 }
 .navigation-buttons button {
     flex-grow: 1;
@@ -231,18 +214,27 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer;
     transition: background-color 0.3s, transform 0.1s;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    margin: 0 5px;
 }
-.navigation-buttons button:hover {
+.navigation-buttons button:hover:not(:disabled) { /* 無効化されたボタンはホバー効果なし */
     background-color: #2e86c1;
     transform: translateY(-2px);
+}
+.navigation-buttons button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 .navigation-buttons #next-btn,
 #submit-btn {
     background-color: #0b6cb5;
 }
+.navigation-buttons #next-btn:hover:not(:disabled),
+#submit-btn:hover:not(:disabled) {
+    background-color: #0a5b9b;
+}
 
-/* 8. 結果表示エリア */
+/* 8. 結果表示エリア (以下省略。元のCSSとD軸の色以外は同一で問題ありません) */
+
 #results {
     margin-top: 60px;
     padding-top: 30px;
@@ -285,14 +277,14 @@ input[type="range"]::-webkit-slider-thumb {
 .score-summary {
     display: flex;
     justify-content: space-around;
-    gap: 10px; /* ボックス間のスペースを少し減らす */
-    flex-wrap: wrap; /* 4つを横並びにするため折り返しを許可 */
+    gap: 10px; 
+    flex-wrap: wrap; 
     margin-top: 30px;
 }
 .score-box {
     padding: 25px;
     border-radius: 15px;
-    width: 22%; /* 4つが並ぶように調整 */
+    width: 22%; 
     min-width: 150px;
     font-weight: 700;
     text-align: left;
@@ -307,14 +299,14 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .score-box h3 {
     margin: 0;
-    font-size: 1.0em; /* 少し小さくする */
+    font-size: 1.0em; 
     color: #fff;
     opacity: 0.9;
     font-weight: 500;
     margin-bottom: 5px;
 }
 .score-value {
-    font-size: 2.0em; /* 少し小さくする */
+    font-size: 2.0em; 
     color: #fff;
     display: inline-block;
     margin-top: 5px;
@@ -324,7 +316,7 @@ input[type="range"]::-webkit-slider-thumb {
 #e-score { background-color: #e74c3c; transition-delay: 0.1s; } 
 #c-score { background-color: #3498db; transition-delay: 0.2s; } 
 #l-score { background-color: #2ecc71; transition-delay: 0.3s; } 
-#d-score { background-color: #9b59b6; transition-delay: 0.4s; } /* 💡 D軸の色を追加 */
+#d-score { background-color: #9b59b6; transition-delay: 0.4s; } 
 
 /* 9-1. 安定性指標のスタイル */
 .stability-indicator {
@@ -361,7 +353,7 @@ input[type="range"]::-webkit-slider-thumb {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    transition-delay: 0.5s; /* D軸表示の後に遅延させる */
+    transition-delay: 0.5s; 
 }
 #compatibility-results.show {
     opacity: 1;
@@ -407,5 +399,6 @@ input[type="range"]::-webkit-slider-thumb {
     .score-summary { flex-direction: column; gap: 15px; }
     .score-box { width: 100%; }
     #type-result { font-size: 1.8em; }
-    .navigation-buttons button { font-size: 1.0em; }
+    .navigation-buttons { gap: 5px; } /* スマホでの隙間を調整 */
+    .navigation-buttons button { font-size: 0.9em; padding: 12px 15px; }
 }
