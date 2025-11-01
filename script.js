@@ -1,5 +1,6 @@
 // =================================================
 // データ定義
+// (変更なし、元のコードを使用)
 // =================================================
 
 const questions = [
@@ -43,11 +44,11 @@ const questions = [
     },
 ];
 
-// D軸の追加設定
+// D軸の追加設定 (変更なし)
 const DECISION_TRIALS = 5; 
 const DECISION_MAX_SCORE = 5 * DECISION_TRIALS; 
 
-// α/γの閾値（D軸を新しいスコアリングに合わせて調整）
+// α/γの閾値（変更なし）
 const CUTOFFS = {
     E: { high: 15, low: -15, max: 40 }, 
     C: { high: 18, low: -18, max: 50 }, 
@@ -55,13 +56,13 @@ const CUTOFFS = {
     D: { high: 15, low: 5, max: DECISION_MAX_SCORE } 
 };
 
-// 安定性の閾値
+// 安定性の閾値 (変更なし)
 const STABILITY_THRESHOLDS = {
     Intermediate: 3, 
     Unstable: 1.5    
 };
 
-// 💡 タイプ分類の説明を新しい表記（軸名＋分類）に合わせて調整
+// 💡 タイプ分類の説明 (変更なし)
 const typeDescriptions = {
     'EαCαLαDα': { name: 'EαCαLαDα型: 全能の王 (理想形)', desc: '感情、対話、思考、判断力全てが極めて高い、非常に稀でバランスの取れたリーダータイプです。即断即決と多角的な視点を両立します。' },
     'EβCβLβDα': { name: 'EβCβLβDα型: 迅速な実行者', desc: '全体的にバランスが取れていますが、特に判断力・決断力が高く、チームのスピードを上げる役割を果たします。' },
@@ -82,7 +83,7 @@ let dAxisData = {
     currentTrial: 0,
     totalScore: 0,
     currentInstruction: null, 
-    startTime: null // 💡 タイマーリセット
+    startTime: null 
 };
 
 const startScreen = document.getElementById('start-screen');
@@ -94,7 +95,6 @@ const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const submitBtn = document.getElementById('submit-btn');
 
-// D軸専用DOM要素（一時的なコンテナとして利用）
 let decisionArea = null;
 
 
@@ -150,9 +150,10 @@ function renderQuestions() {
         
         questionsContainer.appendChild(qDiv);
     });
-    // 💡 修正: decisionAreaの参照をここで取得
+    // decisionAreaの参照を取得
     decisionArea = document.getElementById(`decision-area-q${questions.find(q => q.dim === 'D').id}`);
     
+    // 最初の質問を表示
     showQuestion(0);
 }
 
@@ -173,7 +174,8 @@ function startDecisionTrial() {
         info.textContent = `最終スコア: ${dAxisData.totalScore} / ${DECISION_MAX_SCORE}。次へお進みください。`;
         statement.textContent = "回答が完了しました。次へ進んでください。";
         document.getElementById(`q31`).value = dAxisData.totalScore;
-        nextBtn.disabled = false;
+        nextBtn.disabled = false; // 完了したら次へボタンを有効化
+        updateButtons(); // 完了状態を反映
         return;
     }
     
@@ -188,10 +190,10 @@ function startDecisionTrial() {
     let instructionText = '';
     
     if (instruction === 'right') {
-        instructionText = '【青】右のボタンを押してください'; // 💡 視覚指示の追加
+        instructionText = '【青】右のボタンを押してください'; // 視覚指示の追加
         color = '#3498db'; // 青
     } else {
-        instructionText = '【赤】左のボタンを押してください'; // 💡 視覚指示の追加
+        instructionText = '【赤】左のボタンを押してください'; // 視覚指示の追加
         color = '#e74c3c'; // 赤
     }
     
@@ -199,6 +201,9 @@ function startDecisionTrial() {
     display.textContent = instructionText;
     display.style.color = color;
     dAxisData.startTime = performance.now();
+    
+    // ボタンを再有効化（誤クリック防止のため、試行開始時に念のため実行）
+    document.querySelectorAll('.button-options button').forEach(btn => btn.disabled = false);
 }
 
 /**
@@ -206,33 +211,45 @@ function startDecisionTrial() {
  * @param {string} action - 'left' or 'right'
  */
 window.handleDecisionClick = function(action) {
-    if (dAxisData.currentTrial > DECISION_TRIALS || !dAxisData.startTime) {
+    // 試行がまだ始まっていないか、既に終了している場合は無視
+    if (!dAxisData.startTime || dAxisData.currentTrial > DECISION_TRIALS) {
         return; 
     }
 
+    // ボタンを無効化（二重クリック防止）
+    document.querySelectorAll('.button-options button').forEach(btn => btn.disabled = true);
+    
     const endTime = performance.now();
     const reactionTimeMs = endTime - dAxisData.startTime;
     const isCorrect = action === dAxisData.currentInstruction;
     
     let score = 0;
+    const display = document.getElementById('instruction-display');
 
     if (isCorrect) {
         if (reactionTimeMs < 500) {
             score = 5;
+            display.textContent = "◎ 5pt (高速)";
         } else if (reactionTimeMs < 1000) {
             score = 3;
+            display.textContent = "〇 3pt (標準)";
         } else {
             score = 1;
+            display.textContent = "△ 1pt (遅延)";
         }
+        display.style.color = '#2ecc71'; // 緑色
     } else {
         score = 0;
+        display.textContent = "× 0pt (誤答)";
+        display.style.color = '#e74c3c'; // 赤色
     }
 
     dAxisData.totalScore += score;
     dAxisData.startTime = null; // タイマーをリセット
+    document.getElementById(`q31`).value = dAxisData.totalScore; // スコアを更新
 
     // 次の試行に進む (遅延させて視覚的なフィードバックを与える)
-    setTimeout(startDecisionTrial, 500); 
+    setTimeout(startDecisionTrial, 800); 
 }
 
 
@@ -249,9 +266,8 @@ function showQuestion(index, direction) {
     const prevQuestion = allQuestions[currentQuestionIndex];
     const nextQuestion = allQuestions[index];
 
+    // 前の質問を非表示にする
     if (prevQuestion) {
-        prevQuestion.style.opacity = '0';
-        prevQuestion.style.transform = (direction === 'next') ? 'translateX(-100%)' : 'translateX(100%)';
         prevQuestion.classList.remove('active');
         // D軸の試行を停止
         if (questions[currentQuestionIndex].dim === 'D') {
@@ -259,37 +275,35 @@ function showQuestion(index, direction) {
         }
     }
 
-    // アニメーション完了を待ってから次の質問を表示
+    // 次の質問を表示
     setTimeout(() => {
-        if (prevQuestion) {
-            prevQuestion.style.visibility = 'hidden';
-            prevQuestion.style.position = 'absolute';
-            prevQuestion.style.transform = 'translateX(0)'; 
-        }
-        
         nextQuestion.classList.add('active');
-        nextQuestion.style.opacity = '1';
-        nextQuestion.style.transform = 'translateX(0)';
-        nextQuestion.style.visibility = 'visible';
-        nextQuestion.style.position = 'relative';
-
         currentQuestionIndex = index;
         updateButtons();
         isTransitioning = false;
         
-        // 💡 修正: D軸の質問に到達したら試行を開始
-        if (questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
-            // Q31に到達した瞬間、強制的に最初の試行を開始させる
-            nextBtn.disabled = true; 
-            startDecisionTrial();
-        } else if (questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial >= DECISION_TRIALS) {
-             // 試行が既に完了している場合は「次へ」を有効
-             nextBtn.disabled = false; 
+        // D軸の質問に到達したら試行を開始
+        if (questions[currentQuestionIndex].dim === 'D') {
+            const isCompleted = dAxisData.currentTrial >= DECISION_TRIALS;
+            
+            // 既に完了している場合は、結果を表示して次へを有効化
+            if (isCompleted) {
+                document.getElementById('instruction-display').textContent = "試行完了";
+                document.getElementById('instruction-display').style.color = '#2ecc71';
+                document.getElementById('trial-info').textContent = `最終スコア: ${dAxisData.totalScore} / ${DECISION_MAX_SCORE}。次へお進みください。`;
+                document.getElementById(`statement-q31`).textContent = "回答が完了しました。次へ進んでください。";
+                nextBtn.disabled = false;
+            } else {
+                // 未完了の場合は試行を開始し、次へを無効化
+                nextBtn.disabled = true; 
+                startDecisionTrial();
+            }
         } else {
+            // D軸以外の質問は次へを有効化
             nextBtn.disabled = false;
         }
 
-    }, 500);
+    }, 300); // CSSのトランジション時間に合わせて調整
 }
 
 
@@ -297,15 +311,17 @@ function updateButtons() {
     navButtonsContainer.style.display = 'flex';
     prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
     
+    // D軸の質問で、試行が未完了の場合は次へを無効化（showQuestionで制御）
     if (questions[currentQuestionIndex] && questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
-        // D軸の試行中は「次へ」を無効
         nextBtn.style.display = 'block';
-        nextBtn.disabled = true; 
+        nextBtn.disabled = true; // startDecisionTrialで有効化される
         submitBtn.style.display = 'none';
     } else if (currentQuestionIndex === questions.length - 1) {
+        // 最後の質問
         nextBtn.style.display = 'none';
         submitBtn.style.display = 'block';
     } else {
+        // 途中の質問
         nextBtn.style.display = 'block';
         nextBtn.disabled = false;
         submitBtn.style.display = 'none';
@@ -321,15 +337,29 @@ const classifyScore = (score, axis) => {
     return 'β';
 };
 
+// 安定性判定 (D軸のスコアリングロジックを修正)
 function determineStability(score, axis) {
+    if (axis === 'D') {
+        // D軸は低スコアが不安定、高スコアが安定
+        const maxScore = CUTOFFS.D.max;
+        const ratio = score / maxScore;
+        
+        if (ratio >= 0.8) return 'Stable'; // 80%以上
+        if (ratio >= 0.5) return 'Intermediate'; // 50%以上
+        return 'Unstable'; // 50%未満
+    }
+
+    // 他の軸 (E, C, L) は中央値からの乖離で判定
     const { high } = CUTOFFS[axis];
     const absScore = Math.abs(score);
     const cutoffAbs = high; 
 
-    if (absScore < cutoffAbs * (1 - 1/STABILITY_THRESHOLDS.Intermediate)) {
+    // 中央の安定範囲 (例: highの1/3以下)
+    if (absScore < cutoffAbs / STABILITY_THRESHOLDS.Intermediate) {
         return 'Stable';
     }
     
+    // 不安定範囲 (例: highの2/3以上)
     if (absScore >= cutoffAbs * STABILITY_THRESHOLDS.Unstable) {
         return 'Unstable';
     }
@@ -337,15 +367,31 @@ function determineStability(score, axis) {
     return 'Intermediate';
 }
 
+
 function getGoodMatches(e, c, l, d) {
     let matches = [];
     
     const typeKey = `E${e}C${c}L${l}D${d}`;
     
+    // 常にββββ型との相性を表示
     if (typeKey !== 'EβCβLβDβ') {
-         matches.push({ name: typeDescriptions['EβCβLβDβ'].name, reason: `あなたと補完し合えるバランスタイプで、お互いの弱点をカバーし合えます。` });
+          matches.push({ name: typeDescriptions['EβCβLβDβ'].name, reason: `あなたと補完し合えるバランスタイプで、お互いの弱点をカバーし合えます。` });
     }
     
+    // 補完的な相性ロジックを追加（例：対極のαとγ）
+    if (e === 'α') {
+        matches.push({ name: 'Eγ型', reason: 'あなたの過度な感情移入を、冷静なEγ型が現実的にサポートしてくれます。' });
+    } else if (e === 'γ') {
+        matches.push({ name: 'Eα型', reason: 'あなたの論理的な判断に、Eα型の共感力が深みを与えてくれます。' });
+    }
+    
+    // L軸の補完
+    if (l === 'α' && d === 'γ') {
+        // LαDγ: 優柔不断な賢者にはDαが効く
+         matches.push({ name: 'Dα型', reason: 'あなたの深い分析力に、Dα型の迅速な行動力が火をつけます。' });
+    }
+    
+    // 重複を削除してユニークなリストにする
     const uniqueMatches = Array.from(new Set(matches.map(m => m.name)))
         .map(name => {
             return matches.find(m => m.name === name);
@@ -379,6 +425,7 @@ function calculateResults(event) {
             score = -score;  
         }
         
+        // D軸のスコアは、既にhandleDecisionClickでhidden inputにセットされているため、それをそのまま使用
         if (q.dim === 'E') eScore += score;
         if (q.dim === 'C') cScore += score;
         if (q.dim === 'L') lScore += score;
@@ -456,6 +503,7 @@ startButton.addEventListener('click', () => {
     startScreen.style.opacity = '0';
     setTimeout(() => {
         startScreen.style.display = 'none';
+        eclForm.style.display = 'block'; // displayをblockにする
         eclForm.classList.add('show');
         eclForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 500);
