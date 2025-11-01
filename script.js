@@ -1,53 +1,22 @@
 // =================================================
-// データ定義 (前回の修正版と同一)
+// データ定義 (省略: 前回の修正版と同一)
 // =================================================
 const questions = [
+    // ... (質問データは省略) ...
     { id: 1, dim: 'E', sub: 'E1', statement: "相手が言葉にしない感情の変化にも、すぐに気づきやすい。", type: 'slider', reverse: false, group: "E軸: 感情力 - 感情と倫理" },
-    { id: 2, dim: 'E', sub: 'E2', statement: "自分の利益と他者の公平性が対立した場合、公平性を優先して行動する。", type: 'slider', reverse: false },
-    { id: 3, dim: 'E', sub: 'E1', statement: "ニュースや物語で他者のつらい状況を見ると、自分まで悲しい気持ちになる。", type: 'slider', reverse: false },
-    { id: 4, dim: 'E', sub: 'E2', statement: "たとえ少数の犠牲が出ても、多数の人々が幸せになるなら仕方がないと考える。", type: 'slider', reverse: true },
-    { id: 5, dim: 'E', sub: 'E1', statement: "友人のささいな喜びや不満を、まるで自分のことのように感じる。", type: 'slider', reverse: false },
-    { id: 6, dim: 'E', sub: 'E2', statement: "誰かを助けるためなら、会社の決まりを無視して行動しても良いと思う。", type: 'slider', reverse: false },
-    { id: 7, dim: 'E', sub: 'E1', statement: "落ち込んでいる人に会うと、自分まで気持ちが引きずられやすい。", type: 'slider', reverse: true },
-    { id: 8, dim: 'E', sub: 'E2', statement: "自分の責任ではない問題は、見て見ぬふりをして関わらないでおく。", type: 'slider', reverse: true },
-    { id: 9, dim: 'C', sub: 'C1', statement: "自分の話が長くなると感じたら、すぐに話を短くまとめることができる。", type: 'slider', reverse: false, group: "C軸: 対話力 - 伝達と把握" },
-    { id: 10, dim: 'C', sub: 'C2', statement: "話が脱線しても、相手が本当に伝えたい核心のメッセージを見失わない。", type: 'slider', reverse: false },
-    { id: 11, dim: 'C', sub: 'C1', statement: "相手の反応が鈍いと感じたら、自分の話し方をすぐに修正して理解を促す。", type: 'slider', reverse: false },
-    { id: 12, dim: 'C', sub: 'C2', statement: "初めて聞く説明でも、途中で質問なしに内容を一度で理解できることが多い。", type: 'slider', reverse: false },
-    { id: 13, dim: 'C', sub: 'C1', statement: "相手が知識のない分野の話をする場合、意図的に簡単な言葉を選んで話す。", type: 'slider', reverse: false },
-    { id: 14, dim: 'C', sub: 'C2', statement: "複数の人が同時に話していても、それぞれの主張を正確に聞き分けられる。", type: 'slider', reverse: false },
-    { id: 15, dim: 'C', sub: 'C1', statement: "自分のアイデアを説明するとき、声のトーンや身振り手振りで相手の興味を引き出せる。", type: 'slider', reverse: false },
-    { id: 16, dim: 'C', sub: 'C2', statement: "会議で色々な意見が出ても、今何が問題なのかを整理して理解できる。", type: 'slider', reverse: false },
-    { id: 17, dim: 'C', sub: 'C1', statement: "メールやチャットを送る前に、誤解がないように表現を何度も推敲する。", type: 'slider', reverse: false },
-    { id: 18, dim: 'C', sub: 'C2', statement: "自分の意見を言うことより、相手の話を聞き、その真意を探る方が得意だ。", type: 'slider', reverse: false },
-    { id: 19, dim: 'L', sub: 'L1', statement: "自分の好き嫌いが、データ分析の結果に影響を与えることは絶対にない。", type: 'slider', reverse: false, group: "L軸: 思考力 - 論理と判断" },
-    { id: 20, dim: 'L', sub: 'L2', statement: "何か新しいことを始める前には、手順を細かく書き出す作業が欠かせない。", type: 'slider', reverse: false },
-    { id: 21, dim: 'L', sub: 'L3', statement: "専門家や権威ある人の発言でも、「本当にそうか？」と必ず一度立ち止まって検証する。", type: 'slider', reverse: false },
-    { id: 22, dim: 'L', sub: 'L1', statement: "感情的にならず、自分の嫌いな人の意見でも正しいなら受け入れられる。", type: 'slider', reverse: false },
-    { id: 23, dim: 'L', sub: 'L2', statement: "結論を出す際、直感やひらめきよりも、段階的な分析プロセスを重視する。", type: 'slider', reverse: false },
-    { id: 24, dim: 'L', sub: 'L3', statement: "新しい情報を見たとき、その情報が「誰の利益になるか」を最初に考える。", type: 'slider', reverse: false },
-    { id: 25, dim: 'L', sub: 'L1', statement: "重要な決定では、過去の経験による「確信」を排除し、現在の事実のみに頼る。", type: 'slider', reverse: false },
-    { id: 26, dim: 'L', sub: 'L2', statement: "複雑な問題に出会ったとき、問題を小さな要素に分解して解決しようとする。", type: 'slider', reverse: false },
-    { id: 27, dim: 'L', sub: 'L3', statement: "「これは当たり前だ」と言われると、かえって「本当に？」と疑いたくなる。", type: 'slider', reverse: false },
-    { id: 28, dim: 'L', sub: 'L1', statement: "揉め事が起きている場でも、感情的にならず、冷静に事実だけを整理できる。", type: 'slider', reverse: false },
-    { id: 29, dim: 'L', sub: 'L2', statement: "勉強や仕事で、まず全体像（目次や構成）を把握しないと細かい作業に入れない。", type: 'slider', reverse: false },
-    { id: 30, dim: 'L', sub: 'L3', statement: "間違いや欠陥を指摘することに抵抗感はなく、むしろ必要なことだと考える。", type: 'slider', reverse: false },
-    
-    { 
-        id: 31, dim: 'D', sub: 'D1', statement: "画面中央に出る指示に従って、**できるだけ早く**ボタンを押してください。", type: 'decision', group: "D軸: 判断力 - 迅速な判断力",
-        options: [
-            { text: "左のボタン", action: 'left' },
-            { text: "右のボタン", action: 'right' }
-        ] 
-    },
+    // ...
+    { id: 31, dim: 'D', sub: 'D1', statement: "画面中央に出る指示に従って、**できるだけ早く**ボタンを押してください。", type: 'decision', group: "D軸: 判断力 - 迅速な判断力", options: [{ text: "左のボタン", action: 'left' }, { text: "右のボタン", action: 'right' }] },
 ];
 
 const DECISION_TRIALS = 5; 
 const DECISION_MAX_SCORE = 5 * DECISION_TRIALS; 
-
-const CUTOFFS = { /* ... (省略) ... */ };
-const STABILITY_THRESHOLDS = { /* ... (省略) ... */ };
-const typeDescriptions = { /* ... (省略) ... */ };
+const CUTOFFS = { E: { high: 15, low: -15, max: 40 }, C: { high: 18, low: -18, max: 50 }, L: { high: 23, low: -23, max: 60 }, D: { high: 15, low: 5, max: DECISION_MAX_SCORE } }; 
+const STABILITY_THRESHOLDS = { Intermediate: 3, Unstable: 1.5 };
+const typeDescriptions = { 
+    'αααα': { name: 'αααα型: 全能の王 (理想形)', desc: '感情、対話、思考、判断力全てが極めて高い、非常に稀でバランスの取れたリーダータイプです。' },
+    // ... (他のタイプも省略) ...
+    'ββββ': { name: 'ββββ型: 均衡の標準人', desc: '全てが中立的で、最も一般的なタイプ。安定性と常識を重視します。' },
+};
 
 
 // =================================================
@@ -71,22 +40,21 @@ let decisionArea = null;
 
 
 // =================================================
-// 💡 1. ダークモード切り替えロジック
+// 1. ダークモード切り替えロジック
 // =================================================
 function setupDarkModeToggle() {
     const toggleButton = document.getElementById('dark-mode-toggle');
     const body = document.body;
     
-    // 初期状態の読み込み (localStorageから)
     const savedMode = localStorage.getItem('theme');
     if (savedMode === 'dark') {
         body.classList.add('dark-mode');
         body.classList.remove('light-mode');
-        toggleButton.textContent = '☀️'; // 太陽アイコン
+        toggleButton.textContent = '☀️'; 
     } else {
         body.classList.add('light-mode');
         body.classList.remove('dark-mode');
-        toggleButton.textContent = '🌙'; // 月アイコン
+        toggleButton.textContent = '🌙'; 
     }
 
     toggleButton.addEventListener('click', () => {
@@ -106,7 +74,7 @@ function setupDarkModeToggle() {
 
 
 // =================================================
-// 2. 質問表示ロジック (変更なし: 前回の修正版と同一)
+// 2. 質問表示とD軸ロジック
 // =================================================
 function renderQuestions() {
     questionsContainer = document.getElementById('questions-container');
@@ -192,21 +160,218 @@ function renderQuestions() {
     showQuestion(0);
 }
 
-// ... (startDecisionTrial, handleDecisionClick, showQuestion, updateButtons, 
-// updateScoreLabel, classifyScore, determineStability, getGoodMatches は前回の修正版と同一ロジック) ...
-function startDecisionTrial() { /* ... */ }
-window.handleDecisionClick = function(action) { /* ... */ }
-function showQuestion(index, direction) { /* ... */ }
-function updateButtons() { /* ... */ }
-window.updateScoreLabel = function(id, value) { /* ... */ }
-const classifyScore = (score, axis) => { /* ... */ };
-function determineStability(score, axis) { /* ... */ }
-function getGoodMatches(e, c, l, d) { /* ... */ }
+function startDecisionTrial() {
+    if (!decisionArea) return;
+    
+    const display = document.getElementById('instruction-display');
+    const info = document.getElementById('trial-info');
+    const statement = document.getElementById(`statement-q31`);
+
+    if (dAxisData.currentTrial >= DECISION_TRIALS) {
+        display.textContent = "試行完了";
+        display.style.color = '#2ecc71';
+        info.textContent = `最終スコア: ${dAxisData.totalScore} / ${DECISION_MAX_SCORE}。次へお進みください。`;
+        statement.textContent = "回答が完了しました。次へ進んでください。";
+        document.getElementById(`q31`).value = dAxisData.totalScore;
+        nextBtn.disabled = false; 
+        updateButtons(); 
+        return;
+    }
+    
+    dAxisData.currentTrial++; 
+    info.textContent = `試行回数: ${dAxisData.currentTrial} / ${DECISION_TRIALS}`;
+
+    const instruction = Math.random() < 0.5 ? 'left' : 'right';
+    dAxisData.currentInstruction = instruction;
+
+    let color = '';
+    let instructionText = '';
+    
+    if (instruction === 'right') {
+        instructionText = '【青】'; 
+        color = '#3498db'; 
+    } else {
+        instructionText = '【赤】'; 
+        color = '#e74c3c'; 
+    }
+    
+    display.textContent = instructionText;
+    display.style.color = color;
+    dAxisData.startTime = performance.now();
+    
+    document.querySelectorAll('.button-options button').forEach(btn => btn.disabled = false);
+}
+
+window.handleDecisionClick = function(action) {
+    if (!dAxisData.startTime || dAxisData.currentTrial > DECISION_TRIALS) return; 
+
+    document.querySelectorAll('.button-options button').forEach(btn => btn.disabled = true);
+    
+    const endTime = performance.now();
+    const reactionTimeMs = endTime - dAxisData.startTime;
+    
+    const isCorrect = (action === dAxisData.currentInstruction);
+    
+    let score = 0;
+    const display = document.getElementById('instruction-display');
+
+    if (isCorrect) {
+        if (reactionTimeMs < 500) {
+            score = 5;
+            display.textContent = "◎ 5pt (高速)";
+        } else if (reactionTimeMs < 1000) {
+            score = 3;
+            display.textContent = "〇 3pt (標準)";
+        } else {
+            score = 1;
+            display.textContent = "△ 1pt (遅延)";
+        }
+        display.style.color = '#2ecc71'; 
+    } else {
+        score = 0;
+        display.textContent = "× 0pt (誤答)";
+        display.style.color = '#e74c3c'; 
+    }
+
+    dAxisData.totalScore += score;
+    dAxisData.startTime = null; 
+    document.getElementById(`q31`).value = dAxisData.totalScore; 
+
+    setTimeout(startDecisionTrial, 800); 
+}
 
 
-// =================================================
-// 💡 3. 結果計算ロジック (アニメーション処理を追加)
-// =================================================
+function showQuestion(index, direction) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    const allQuestions = questionsContainer.querySelectorAll('.question');
+    const prevQuestion = allQuestions[currentQuestionIndex];
+    const nextQuestion = allQuestions[index];
+
+    if (prevQuestion) {
+        prevQuestion.classList.remove('active');
+        if (questions[currentQuestionIndex].dim === 'D') {
+             dAxisData.startTime = null; 
+        }
+    }
+
+    setTimeout(() => {
+        nextQuestion.classList.add('active');
+        currentQuestionIndex = index;
+        updateButtons();
+        isTransitioning = false;
+        
+        if (questions[currentQuestionIndex].dim === 'D') {
+            const isCompleted = dAxisData.currentTrial >= DECISION_TRIALS;
+            const explanationEl = document.getElementById('decision-explanation');
+            
+            if (isCompleted) {
+                explanationEl.style.display = 'none';
+                document.getElementById('instruction-display').textContent = "試行完了";
+                document.getElementById('instruction-display').style.color = '#2ecc71';
+                document.getElementById('trial-info').textContent = `最終スコア: ${dAxisData.totalScore} / ${DECISION_MAX_SCORE}。次へお進みください。`;
+                document.getElementById(`statement-q31`).textContent = "回答が完了しました。次へ進んでください。";
+                nextBtn.disabled = false;
+            } else if (dAxisData.currentTrial === 0) {
+                explanationEl.style.display = 'block';
+                document.getElementById('instruction-display').textContent = "準備完了！";
+                document.getElementById('instruction-display').style.color = '#34495e'; 
+                document.getElementById('trial-info').textContent = `試行回数: 0 / ${DECISION_TRIALS}。「D軸テスト開始」を押してください。`;
+                document.querySelectorAll('.button-options button').forEach(btn => btn.disabled = true);
+                nextBtn.disabled = true;
+            } else {
+                explanationEl.style.display = 'none';
+                startDecisionTrial();
+            }
+        } else {
+            nextBtn.disabled = false;
+        }
+
+    }, 300); 
+}
+
+
+function updateButtons() {
+    if(!navButtonsContainer || !prevBtn || !nextBtn || !submitBtn) return;
+    
+    navButtonsContainer.style.display = 'flex';
+    prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
+    
+    if (questions[currentQuestionIndex] && questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
+        nextBtn.style.display = 'block';
+        nextBtn.disabled = true; 
+        submitBtn.style.display = 'none';
+    } else if (currentQuestionIndex === questions.length - 1) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    } else {
+        nextBtn.style.display = 'block';
+        nextBtn.disabled = false;
+        submitBtn.style.display = 'none';
+    }
+}
+window.updateScoreLabel = function(id, value) {
+    document.getElementById(`label-q${id}`).textContent = Math.round(parseFloat(value));
+}
+
+const classifyScore = (score, axis) => {
+    if (score >= CUTOFFS[axis].high) return 'α';
+    if (score <= CUTOFFS[axis].low) return 'γ';
+    return 'β';
+};
+
+function determineStability(score, axis) {
+    if (axis === 'D') {
+        const maxScore = CUTOFFS.D.max;
+        const ratio = score / maxScore;
+        
+        if (ratio >= 0.8) return 'Stable'; 
+        if (ratio >= 0.5) return 'Intermediate'; 
+        return 'Unstable'; 
+    }
+
+    const { high } = CUTOFFS[axis];
+    const absScore = Math.abs(score);
+    const cutoffAbs = high; 
+
+    if (absScore < cutoffAbs / STABILITY_THRESHOLDS.Intermediate) {
+        return 'Stable';
+    }
+    
+    if (absScore >= cutoffAbs * STABILITY_THRESHOLDS.Unstable) {
+        return 'Unstable';
+    }
+    
+    return 'Intermediate';
+}
+
+function getGoodMatches(e, c, l, d) {
+    let matches = [];
+    const currentTypeKey = `${e}${c}${l}${d}`;
+    const standardTypeKey = 'ββββ';
+    
+    if (currentTypeKey !== standardTypeKey) {
+          matches.push({ name: typeDescriptions[standardTypeKey].name, reason: `あなたと補完し合えるバランスタイプで、お互いの弱点をカバーし合えます。` });
+    }
+    if (e === 'α') {
+        matches.push({ name: 'Eγ型', reason: 'あなたの過度な感情移入を、冷静なEγ型が現実的にサポートしてくれます。' });
+    } else if (e === 'γ') {
+        matches.push({ name: 'Eα型', reason: 'あなたの論理的な判断に、Eα型の共感力が深みを与えてくれます。' });
+    }
+    if (l === 'α' && d === 'γ') {
+         matches.push({ name: 'Dα型', reason: 'あなたの深い分析力に、Dα型の迅速な行動力が火をつけます。' });
+    }
+    
+    const uniqueMatches = Array.from(new Set(matches.map(m => m.name)))
+        .map(name => {
+            return matches.find(m => m.name === name);
+        });
+
+    return uniqueMatches;
+}
+
+
 function calculateResults(event) {
     event.preventDefault();
 
@@ -216,8 +381,6 @@ function calculateResults(event) {
     let dScore = 0; 
     const form = document.getElementById('ecl-form');
     const resultsEl = document.getElementById('results');
-
-    // 1. スコアの集計 (省略) ...
 
     questions.forEach(q => {
         const input = form.elements[`q${q.id}`];
@@ -235,7 +398,6 @@ function calculateResults(event) {
         if (q.dim === 'L') lScore += score;
     });
 
-    // 2. タイプ分類
     const eClass = classifyScore(eScore, 'E');
     const cClass = classifyScore(cScore, 'C');
     const lClass = classifyScore(lScore, 'L');
@@ -243,13 +405,11 @@ function calculateResults(event) {
     const typeKey = `${eClass}${cClass}${lClass}${dClass}`; 
     const result = typeDescriptions[typeKey] || { name: typeKey + '型', desc: `あなたは感情 (${eClass})、対話 (${cClass})、思考 (${lClass})、判断力 (${dClass}) のユニークな組み合わせを持っています。` };
 
-    // 3. 安定性判定 (省略) ...
     const eStability = determineStability(eScore, 'E');
-    const cStability = determineStability(cStability, 'C');
+    const cStability = determineStability(cScore, 'C');
     const lStability = determineStability(lScore, 'L');
     const dStability = determineStability(dScore, 'D'); 
 
-    // 4. 結果のDOMへの反映
     document.getElementById('e-total-score').textContent = Math.round(eScore); 
     document.getElementById('c-total-score').textContent = Math.round(cScore);
     document.getElementById('l-total-score').textContent = Math.round(lScore);
@@ -267,7 +427,6 @@ function calculateResults(event) {
     document.getElementById('type-result').textContent = result.name;
     document.getElementById('type-description').textContent = result.desc;
     
-    // 5. 相性判定の実行と表示 (省略) ...
     const goodMatches = getGoodMatches(eClass, cClass, lClass, dClass);
     const compatibilityDescription = document.getElementById('good-match-description');
     if (goodMatches.length > 0) {
@@ -277,17 +436,14 @@ function calculateResults(event) {
         compatibilityDescription.textContent = 'どのタイプとも安定した関係を築くことができます。';
     }
 
-    // 6. フォームを非表示にし、結果を表示
     form.classList.remove('active');
     form.style.display = 'none'; 
     resultsEl.style.display = 'block';
 
-    // 💡 修正: CSSアニメーションクラスを追加して、スムーズな表示を実現
     setTimeout(() => {
         resultsEl.classList.add('active');
         resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
         
-        // 結果カードの個別のフェードインアニメーションを開始
         document.querySelectorAll('.score-box, .compatibility-card').forEach(el => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
@@ -302,17 +458,13 @@ function calculateResults(event) {
 // =================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ダークモードトグルをセットアップ
     setupDarkModeToggle();
-    
-    // 質問フォームの生成と初期表示
     renderQuestions();
     
     const startBtn = document.getElementById('start-button');
     const startScrn = document.getElementById('start-screen');
     const formEl = document.getElementById('ecl-form');
 
-    // 1. 開始ボタンの処理 (アニメーション制御)
     if (startBtn && startScrn && formEl) {
         startBtn.addEventListener('click', () => {
             startScrn.classList.remove('active');
@@ -330,7 +482,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. 質問ナビゲーション (次へ/前へ/結果を見る)
     if(nextBtn) {
         nextBtn.addEventListener('click', () => {
             if (currentQuestionIndex < questions.length - 1) {
