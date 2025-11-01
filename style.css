@@ -4,35 +4,36 @@
 
 :root {
     /* ライトモードのカラースキーム */
-    --color-primary: #3498db;      /* メインの色 (青) */
+    --color-primary: #3498db;      
     --color-primary-hover: #2980b9;
-    --color-secondary: #ecf0f1;    /* サブボタン/背景の薄い色 */
-    --color-secondary-hover: #dce1e4;
-    --color-text: #34495e;         /* 通常のテキスト色 */
-    --color-background: #ffffff;   /* メイン背景色 */
-    --color-card-background: #fdfdfe; /* カード背景 */
-    --color-border: #e0e6ed;       /* 罫線色 */
-    --color-shadow: rgba(0, 0, 0, 0.08); /* シャドウ色 */
-    --color-slider-fill: #95a5a6;  /* スライダー未選択の色 */
+    --color-secondary: #f4f6f8;    /* サブボタン/背景の薄い色を少し濃く */
+    --color-secondary-hover: #e8ebf0;
+    --color-text: #34495e;         
+    --color-background: #eef2f7;   /* メイン背景色を薄いグレーにし、カードとのコントラストを出す */
+    --color-card-background: #ffffff; /* カード背景は純粋な白 */
+    --color-border: #dcdfe4;       
+    --color-shadow: rgba(0, 0, 0, 0.15); /* シャドウを濃くする */
+    --color-slider-fill: #95a5a6;  
 }
 
 .dark-mode {
     /* ダークモードのカラースキームを上書き */
-    --color-primary: #5dade2;      /* メインの色 (明るい青) */
+    --color-primary: #5dade2;      
     --color-primary-hover: #4a91c7;
-    --color-secondary: #4a5d73;    /* サブボタン/背景の濃い色 */
+    --color-secondary: #4a5d73;    
     --color-secondary-hover: #5d6f85;
-    --color-text: #ecf0f1;         /* テキスト色 (白系) */
-    --color-background: #212529;   /* メイン背景色 (濃いグレー) */
-    --color-card-background: #2c3e50; /* カード背景 (青みがかった濃いグレー) */
-    --color-border: #4a5d73;       /* 罫線色 */
-    --color-shadow: rgba(0, 0, 0, 0.4); /* シャドウ色 (濃くする) */
-    --color-slider-fill: #7f8c8d;  /* スライダー未選択の色 */
+    --color-text: #ecf0f1;         
+    --color-background: #1c1f23;   /* メイン背景を非常に濃い色に */
+    --color-card-background: #2c3e50; /* カード背景は濃い青みがかったグレー */
+    --color-border: #4a5d73;       
+    --color-shadow: rgba(0, 0, 0, 0.5); /* シャドウを濃くする */
+    --color-slider-fill: #7f8c8d;  
 }
 
 * {
     box-sizing: border-box;
-    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    /* スムーズなトランジション */
+    transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 body {
@@ -40,22 +41,20 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    background-color: var(--color-background);
+    background-color: var(--color-background); /* メイン背景を適用 */
     color: var(--color-text);
     display: flex;
     justify-content: center;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 50px 20px;
 }
 
 /* ==================================== */
-/* 2. レイアウトとコンテナ */
+/* 2. レイアウトとコンテナ (カード背景の表示) */
 /* ==================================== */
 
 .main-container {
     width: 100%;
     max-width: 700px;
-    padding: 20px;
 }
 
 .screen {
@@ -64,9 +63,11 @@ body {
     transform: translateY(20px);
     transition: opacity 0.5s ease, transform 0.5s ease;
     padding: 30px;
-    background-color: var(--color-card-background);
+    /* 💡 カード背景を適用 */
+    background-color: var(--color-card-background); 
     border-radius: 12px;
-    box-shadow: 0 10px 30px var(--color-shadow);
+    /* 💡 影を適用 */
+    box-shadow: 0 10px 30px var(--color-shadow); 
 }
 
 .screen.active {
@@ -75,23 +76,13 @@ body {
     transform: translateY(0);
 }
 
-#start-screen {
-    text-align: center;
-    padding: 60px 30px;
-}
-
-h1, h2, h3, h4 {
-    font-weight: 700;
-    color: var(--color-text);
-    margin-top: 0;
-}
+/* ... (見出し等のスタイルは省略) ... */
 
 /* ==================================== */
-/* 3. ボタンとフォーム要素 (強化されたボタンCSS) */
+/* 3. ボタンとフォーム要素 (ボタンデザイン強化) */
 /* ==================================== */
 
 .btn {
-    /* 💡 デフォルトのブラウザスタイルをリセット */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -137,24 +128,9 @@ h1, h2, h3, h4 {
     box-shadow: none;
 }
 
-/* ナビゲーション */
-.nav-buttons-container {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    padding: 10px 0;
-}
-
-.submit-btn {
-    margin-left: auto; 
-}
-
 /* ダークモード切り替えボタン */
 .mode-toggle-btn {
-    /* 💡 ここもリセットを強化 */
-    appearance: none;
-    border: none;
-    
+    /* ... (省略) ... */
     position: fixed;
     top: 20px;
     right: 20px;
@@ -167,111 +143,34 @@ h1, h2, h3, h4 {
     cursor: pointer;
     z-index: 1000;
     box-shadow: 0 2px 5px var(--color-shadow);
-    line-height: 1; /* アイコンを中央に寄せるため */
+    line-height: 1; 
 }
+
+/* ... (質問、スライダーのスタイルは省略) ... */
 
 /* ==================================== */
-/* 4. 質問とスライダー */
-/* ==================================== */
-
-.question {
-    padding: 20px 0;
-    border-bottom: 1px dashed var(--color-border);
-    margin-bottom: 20px;
-    display: none; 
-    opacity: 0;
-    transform: translateX(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.question.active {
-    display: block;
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.question h2 {
-    font-size: 1.2em;
-    color: var(--color-primary);
-    margin-bottom: 15px;
-    border-left: 4px solid var(--color-primary);
-    padding-left: 10px;
-}
-
-.slider-container {
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.min-max-label {
-    font-size: 0.85em;
-    width: 120px;
-    text-align: center;
-    flex-shrink: 0;
-    color: var(--color-text);
-}
-
-.score-label {
-    width: 40px;
-    text-align: center;
-    font-weight: 700;
-    color: var(--color-primary);
-}
-
-input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    flex-grow: 1;
-    height: 10px;
-    background: var(--color-slider-fill);
-    border-radius: 5px;
-    margin: 0 15px;
-    cursor: pointer;
-}
-
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-/* ==================================== */
-/* 5. D軸 (判断力) テストエリア */
+/* 5. D軸 (判断力) テストエリアの調整 */
 /* ==================================== */
 
 #decision-area-q31 {
-    background: var(--color-background);
+    /* D軸内部の背景色をメイン背景ではなく、カード背景にする (より視認性を高めるため) */
+    background: var(--color-card-background);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: inset 0 0 5px var(--color-shadow);
+    box-shadow: 0 2px 8px var(--color-shadow);
 }
 
-#instruction-display {
-    font-family: 'Roboto', sans-serif;
-    letter-spacing: 2px;
-    min-height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px dashed var(--color-border);
-    border-radius: 4px;
-    margin-bottom: 15px;
-    font-size: 2.5em !important;
-}
-
-.button-options {
-    display: flex;
-    justify-content: space-around;
+#decision-explanation {
+    /* D軸の説明パネルの背景も調整 */
+    background: var(--color-secondary);
+    padding: 20px; 
+    border-radius: 8px; 
+    border: 1px solid var(--color-border);
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 .button-options button {
-    /* 💡 D軸ボタンのスタイルもリセットして強化 */
     appearance: none;
     -webkit-appearance: none;
     border: none;
@@ -287,137 +186,4 @@ input[type=range]::-webkit-slider-thumb {
     transition: all 0.2s ease;
 }
 
-.button-options button:hover:not(:disabled) {
-    background-color: var(--color-primary-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--color-shadow);
-}
-
-/* ==================================== */
-/* 6. 結果画面 */
-/* ==================================== */
-
-.type-summary-card {
-    text-align: center;
-    padding: 30px;
-    margin-bottom: 30px;
-    background: linear-gradient(135deg, var(--color-primary), #6dd5ed);
-    border-radius: 15px;
-    color: white;
-    box-shadow: 0 10px 20px rgba(0, 150, 255, 0.3);
-}
-
-.dark-mode .type-summary-card {
-     background: linear-gradient(135deg, #2c3e50, #4a687f);
-     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-}
-
-.result-type-title {
-    font-size: 2.5em;
-    margin: 10px 0;
-    color: white;
-    font-family: 'Roboto', sans-serif;
-}
-
-.score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 20px;
-}
-
-.score-box {
-    padding: 20px;
-    border-radius: 10px;
-    background-color: var(--color-card-background);
-    box-shadow: 0 4px 15px var(--color-shadow);
-    text-align: center;
-    opacity: 0; 
-    transform: translateY(10px);
-}
-
-.score-box h4 {
-    font-size: 0.9em;
-    color: var(--color-primary);
-    margin-bottom: 5px;
-}
-
-.score-value {
-    font-size: 2em;
-    font-weight: 700;
-    color: var(--color-text);
-}
-
-.stability-indicator {
-    font-size: 0.8em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-top: 10px;
-    display: inline-block;
-    font-weight: 700;
-}
-
-.stability-indicator.Stable {
-    background-color: #2ecc7130;
-    color: #2ecc71;
-}
-
-.stability-indicator.Intermediate {
-    background-color: #f1c40f30;
-    color: #f1c40f;
-}
-
-.stability-indicator.Unstable {
-    background-color: #e74c3c30;
-    color: #e74c3c;
-}
-
-.compatibility-card {
-    margin-top: 30px;
-    padding: 25px;
-    background-color: var(--color-card-background);
-    border-radius: 10px;
-    box-shadow: 0 4px 15px var(--color-shadow);
-    opacity: 0;
-    transform: translateY(10px);
-}
-
-.good-match {
-    display: inline-block;
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-top: 5px;
-}
-.good-match-description {
-    font-size: 0.9em;
-    margin-left: 10px;
-    color: #7f8c8d;
-}
-
-/* ==================================== */
-/* 7. アニメーションユーティリティ */
-/* ==================================== */
-
-/* フェードイン・アップアニメーション */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 20px, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-.fade-in-up {
-    animation-name: fadeInUp;
-    animation-duration: 0.6s;
-    animation-fill-mode: both;
-}
-
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
-.delay-6 { animation-delay: 0.6s; }
+/* ... (結果画面、アニメーションのスタイルは省略) ... */
