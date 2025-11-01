@@ -1,18 +1,29 @@
 /* ==================================== */
-/* 1. 変数と基本設定 (ダークモード対応) */
+/* 0. 全体リセットと基本設定 */
 /* ==================================== */
+
+/* ブラウザのデフォルトスタイルを強力にリセット */
+button, .btn, input[type="submit"] {
+    all: unset; /* 💡 すべてのスタイルをリセット */
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    -webkit-tap-highlight-color: transparent;
+}
 
 :root {
     /* ライトモードのカラースキーム */
-    --color-primary: #3498db;      
+    --color-primary: #3498db;      /* メインの青 */
     --color-primary-hover: #2980b9;
-    --color-secondary: #f4f6f8;    /* サブボタン/背景の薄い色を少し濃く */
-    --color-secondary-hover: #e8ebf0;
+    --color-secondary: #f0f3f6;    /* サブボタン/説明パネルの背景を薄い青系に */
+    --color-secondary-hover: #e0e6ed;
     --color-text: #34495e;         
-    --color-background: #eef2f7;   /* メイン背景色を薄いグレーにし、カードとのコントラストを出す */
-    --color-card-background: #ffffff; /* カード背景は純粋な白 */
+    --color-background: #eef2f7;   /* メイン背景色 (薄い水色系) */
+    --color-card-background: #ffffff; /* カード背景 (白) */
     --color-border: #dcdfe4;       
-    --color-shadow: rgba(0, 0, 0, 0.15); /* シャドウを濃くする */
+    --color-shadow: rgba(0, 0, 0, 0.2); /* シャドウをより濃く */
     --color-slider-fill: #95a5a6;  
 }
 
@@ -23,16 +34,15 @@
     --color-secondary: #4a5d73;    
     --color-secondary-hover: #5d6f85;
     --color-text: #ecf0f1;         
-    --color-background: #1c1f23;   /* メイン背景を非常に濃い色に */
-    --color-card-background: #2c3e50; /* カード背景は濃い青みがかったグレー */
+    --color-background: #1c1f23;   
+    --color-card-background: #2c3e50; 
     --color-border: #4a5d73;       
-    --color-shadow: rgba(0, 0, 0, 0.5); /* シャドウを濃くする */
+    --color-shadow: rgba(0, 0, 0, 0.6); 
     --color-slider-fill: #7f8c8d;  
 }
 
 * {
     box-sizing: border-box;
-    /* スムーズなトランジション */
     transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
@@ -41,7 +51,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    background-color: var(--color-background); /* メイン背景を適用 */
+    background-color: var(--color-background);
     color: var(--color-text);
     display: flex;
     justify-content: center;
@@ -49,7 +59,7 @@ body {
 }
 
 /* ==================================== */
-/* 2. レイアウトとコンテナ (カード背景の表示) */
+/* 1. レイアウトとカード (四角の再適用) */
 /* ==================================== */
 
 .main-container {
@@ -66,8 +76,8 @@ body {
     /* 💡 カード背景を適用 */
     background-color: var(--color-card-background); 
     border-radius: 12px;
-    /* 💡 影を適用 */
-    box-shadow: 0 10px 30px var(--color-shadow); 
+    /* 💡 影を強調 */
+    box-shadow: 0 10px 40px var(--color-shadow); 
 }
 
 .screen.active {
@@ -76,26 +86,19 @@ body {
     transform: translateY(0);
 }
 
-/* ... (見出し等のスタイルは省略) ... */
-
 /* ==================================== */
-/* 3. ボタンとフォーム要素 (ボタンデザイン強化) */
+/* 2. ボタンとフォーム要素 (強制的なモダンデザイン) */
 /* ==================================== */
 
 .btn {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none; 
-    
+    /* 💡 強力な再定義 */
     padding: 12px 25px;
     border-radius: 8px;
     font-size: 1.05em;
-    cursor: pointer;
     font-weight: 700;
     transition: all 0.2s ease;
     margin: 5px;
-    text-align: center;
+    line-height: 1.2; /* テキスト中央寄せのため */
 }
 
 .btn.primary {
@@ -106,7 +109,7 @@ body {
 .btn.primary:hover:not(:disabled) {
     background-color: var(--color-primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--color-shadow);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .btn.secondary {
@@ -118,7 +121,7 @@ body {
 .btn.secondary:hover:not(:disabled) {
     background-color: var(--color-secondary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--color-shadow);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn:disabled {
@@ -130,7 +133,8 @@ body {
 
 /* ダークモード切り替えボタン */
 .mode-toggle-btn {
-    /* ... (省略) ... */
+    /* 💡 強力な再定義 */
+    padding: 0;
     position: fixed;
     top: 20px;
     right: 20px;
@@ -140,28 +144,23 @@ body {
     background-color: var(--color-secondary);
     border: 1px solid var(--color-border);
     font-size: 1.2em;
-    cursor: pointer;
     z-index: 1000;
     box-shadow: 0 2px 5px var(--color-shadow);
-    line-height: 1; 
+    line-height: 45px; /* 縦中央寄せ */
 }
 
-/* ... (質問、スライダーのスタイルは省略) ... */
-
 /* ==================================== */
-/* 5. D軸 (判断力) テストエリアの調整 */
+/* 3. D軸 (判断力) テストエリアの調整 */
 /* ==================================== */
 
 #decision-area-q31 {
-    /* D軸内部の背景色をメイン背景ではなく、カード背景にする (より視認性を高めるため) */
-    background: var(--color-card-background);
+    background: var(--color-background); /* カード背景と区別するため、少し暗めの背景に */
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 8px var(--color-shadow);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #decision-explanation {
-    /* D軸の説明パネルの背景も調整 */
     background: var(--color-secondary);
     padding: 20px; 
     border-radius: 8px; 
@@ -171,19 +170,21 @@ body {
 }
 
 .button-options button {
-    appearance: none;
-    -webkit-appearance: none;
-    border: none;
-    
-    width: 48%;
+    /* 💡 D軸ボタンもbtnスタイルを継承しつつ、個別に調整 */
     padding: 20px;
     font-size: 1.1em;
+    width: 48%;
     font-weight: 700;
     border-radius: 10px;
     background-color: var(--color-primary);
     color: white;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-/* ... (結果画面、アニメーションのスタイルは省略) ... */
+.button-options button:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+}
+
+
+/* ... (その他のスタイルは省略) ... */
