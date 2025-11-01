@@ -72,7 +72,7 @@ const typeDescriptions = {
 
 
 // =================================================
-// DOM要素の取得と変数定義
+// DOM要素の取得と変数定義 (初期値はnull/未定義でOK)
 // =================================================
 
 let currentQuestionIndex = 0;
@@ -84,17 +84,18 @@ let dAxisData = {
     startTime: null 
 };
 
+// これらはdocument.addEventListener('DOMContentLoaded'後に定義されます
 const startScreen = document.getElementById('start-screen');
 const startButton = document.getElementById('start-button');
 const eclForm = document.getElementById('ecl-form');
-const questionsContainer = document.getElementById('questions-container');
-const navButtonsContainer = document.getElementById('navigation-buttons-container');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const submitBtn = document.getElementById('submit-btn');
+// 💡 修正: これらはグローバル変数として宣言しますが、値の取得はDOMReady後に行われます
+let questionsContainer; 
+let navButtonsContainer; 
+let prevBtn;
+let nextBtn;
+let submitBtn;
 
 let decisionArea = null;
-
 
 // =================================================
 // 関数定義
@@ -104,8 +105,20 @@ let decisionArea = null;
  * 質問フォームをDOMに描画する
  */
 function renderQuestions() {
+    // 💡 修正: DOM要素をここで確実に取得する
+    questionsContainer = document.getElementById('questions-container');
+    navButtonsContainer = document.getElementById('navigation-buttons-container');
+    prevBtn = document.getElementById('prev-btn');
+    nextBtn = document.getElementById('next-btn');
+    submitBtn = document.getElementById('submit-btn');
+
+    if (!questionsContainer) {
+        console.error("Error: questionsContainer element not found.");
+        return;
+    }
+
     let currentGroup = '';
-    questionsContainer.innerHTML = ''; // 質問コンテナをクリア
+    questionsContainer.innerHTML = ''; 
     
     questions.forEach((q) => {
         const qDiv = document.createElement('div');
@@ -179,7 +192,7 @@ function renderQuestions() {
         startTrialsBtn.addEventListener('click', () => {
              // 説明パネルを非表示にし、試行を開始
             document.getElementById('decision-explanation').style.display = 'none';
-            // 試行回数を1に設定し、最初の試行を開始
+            // 試行回数をリセットし、最初の試行を開始
             dAxisData.currentTrial = 0; 
             startDecisionTrial();
         });
@@ -211,7 +224,7 @@ function startDecisionTrial() {
         return;
     }
     
-    // 試行回数増加と表示更新 (説明画面で0を1にする代わりに、ここで増加させる)
+    // 試行回数増加と表示更新 
     dAxisData.currentTrial++; 
     info.textContent = `試行回数: ${dAxisData.currentTrial} / ${DECISION_TRIALS}`;
 
@@ -222,6 +235,7 @@ function startDecisionTrial() {
     let instructionText = '';
     
     // 指示テキストを色名のみにする
+    // ルール：青→右、赤→左
     if (instruction === 'right') {
         instructionText = '【青】'; 
         color = '#3498db'; // 青
@@ -244,7 +258,6 @@ function startDecisionTrial() {
  * @param {string} action - 'left' or 'right'
  */
 window.handleDecisionClick = function(action) {
-    // 試行がまだ始まっていないか、既に終了している場合は無視
     if (!dAxisData.startTime || dAxisData.currentTrial > DECISION_TRIALS) {
         return; 
     }
@@ -254,8 +267,11 @@ window.handleDecisionClick = function(action) {
     
     const endTime = performance.now();
     const reactionTimeMs = endTime - dAxisData.startTime;
-    const isCorrect = (action === 'right' && dAxisData.currentInstruction === 'right') || 
-                      (action === 'left' && dAxisData.currentInstruction === 'left');
+    
+    // 正答判定:
+    // ユーザーが 'right' を押し、指示が 'right' (青) の場合、または
+    // ユーザーが 'left' を押し、指示が 'left' (赤) の場合
+    const isCorrect = (action === dAxisData.currentInstruction);
     
     let score = 0;
     const display = document.getElementById('instruction-display');
@@ -352,23 +368,24 @@ function showQuestion(index, direction) {
 
 
 function updateButtons() {
-    navButtonsContainer.style.display = 'flex';
-    prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
+    // 💡 修正: navButtonsContainerが取得済みであることを前提とする
+    if(navButtonsContainer) navButtonsContainer.style.display = 'flex';
+    if(prevBtn) prevBtn.style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
     
     if (questions[currentQuestionIndex] && questions[currentQuestionIndex].dim === 'D' && dAxisData.currentTrial < DECISION_TRIALS) {
         // D軸の質問で、試行が未完了の場合は次へを無効化
-        nextBtn.style.display = 'block';
-        nextBtn.disabled = true; 
-        submitBtn.style.display = 'none';
+        if(nextBtn) nextBtn.style.display = 'block';
+        if(nextBtn) nextBtn.disabled = true; 
+        if(submitBtn) submitBtn.style.display = 'none';
     } else if (currentQuestionIndex === questions.length - 1) {
         // 最後の質問
-        nextBtn.style.display = 'none';
-        submitBtn.style.display = 'block';
+        if(nextBtn) nextBtn.style.display = 'none';
+        if(submitBtn) submitBtn.style.display = 'block';
     } else {
         // 途中の質問
-        nextBtn.style.display = 'block';
-        nextBtn.disabled = false;
-        submitBtn.style.display = 'none';
+        if(nextBtn) nextBtn.style.display = 'block';
+        if(nextBtn) nextBtn.disabled = false;
+        if(submitBtn) submitBtn.style.display = 'none';
     }
 }
 window.updateScoreLabel = function(id, value) {
@@ -538,40 +555,60 @@ function calculateResults(event) {
 // イベントリスナー
 // =================================================
 
-// 1. 開始ボタンの処理 💡 修正: フォーム表示の確実性を向上
-startButton.addEventListener('click', () => {
-    startScreen.style.opacity = '0';
-    setTimeout(() => {
-        startScreen.style.display = 'none';
-        eclForm.style.display = 'block'; 
-        
-        // 描画が完了してから少し待ってクラスを追加し、スムーズに表示
+// 1. 開始ボタンの処理
+// 💡 修正: startScreenとeclFormはグローバルで定義済みのDOM要素（HTML側でIDが付与されている前提）
+const startBtn = document.getElementById('start-button');
+const startScrn = document.getElementById('start-screen');
+const formEl = document.getElementById('ecl-form');
+
+if (startBtn && startScrn && formEl) {
+    startBtn.addEventListener('click', () => {
+        startScrn.style.opacity = '0';
         setTimeout(() => {
-            eclForm.classList.add('show');
-            eclForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 10);
-    }, 500);
-});
+            startScrn.style.display = 'none';
+            formEl.style.display = 'block'; 
+            
+            // 描画が完了してから少し待ってクラスを追加し、スムーズに表示
+            setTimeout(() => {
+                formEl.classList.add('show');
+                formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 10);
+        }, 500);
+    });
+}
+
 
 // 2. 質問ナビゲーション (次へ)
-nextBtn.addEventListener('click', () => {
-    if (currentQuestionIndex < questions.length - 1) {
-        showQuestion(currentQuestionIndex + 1, 'next');
-    }
-});
-
 // 3. 質問ナビゲーション (前へ)
-prevBtn.addEventListener('click', () => {
-    if (currentQuestionIndex > 0) {
-        showQuestion(currentQuestionIndex - 1, 'prev');
-    }
-});
-
 // 4. 結果表示ボタン
-submitBtn.addEventListener('click', calculateResults);
+// これらのイベントリスナーは renderQuestions 実行後に確実にDOM要素が取得されてから動作するように調整が必要です。
+// renderQuestionsの最後に navigator 関連のイベントリスナーを配置します。
+
 
 // =================================================
 // 初期化
 // =================================================
 
-document.addEventListener('DOMContentLoaded', renderQuestions);
+document.addEventListener('DOMContentLoaded', () => {
+    // 質問フォームの生成と初期表示
+    renderQuestions();
+    
+    // ナビゲーションボタンのイベントリスナーをここで設定（renderQuestions内でDOM要素が確実に取得された後）
+    if(nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                showQuestion(currentQuestionIndex + 1, 'next');
+            }
+        });
+    }
+    if(prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1, 'prev');
+            }
+        });
+    }
+    if(submitBtn) {
+        submitBtn.addEventListener('click', calculateResults);
+    }
+});
