@@ -1,404 +1,392 @@
-/* ================================================= */
-/* 1. 基本スタイルとアニメーション設定 */
-/* ================================================= */
+/* ==================================== */
+/* 1. 変数と基本設定 (ダークモード対応) */
+/* ==================================== */
+
+:root {
+    /* ライトモードのカラースキーム */
+    --color-primary: #3498db;      /* メインの色 (青) */
+    --color-primary-hover: #2980b9;
+    --color-secondary: #ecf0f1;    /* サブボタン/背景の薄い色 */
+    --color-secondary-hover: #dce1e4;
+    --color-text: #34495e;         /* 通常のテキスト色 */
+    --color-background: #ffffff;   /* メイン背景色 */
+    --color-card-background: #fdfdfe; /* カード背景 */
+    --color-border: #e0e6ed;       /* 罫線色 */
+    --color-shadow: rgba(0, 0, 0, 0.08); /* シャドウ色 */
+    --color-slider-fill: #95a5a6;  /* スライダー未選択の色 */
+}
+
+.dark-mode {
+    /* ダークモードのカラースキームを上書き */
+    --color-primary: #5dade2;      /* メインの色 (明るい青) */
+    --color-primary-hover: #4a91c7;
+    --color-secondary: #4a5d73;    /* サブボタン/背景の濃い色 */
+    --color-secondary-hover: #5d6f85;
+    --color-text: #ecf0f1;         /* テキスト色 (白系) */
+    --color-background: #212529;   /* メイン背景色 (濃いグレー) */
+    --color-card-background: #2c3e50; /* カード背景 (青みがかった濃いグレー) */
+    --color-border: #4a5d73;       /* 罫線色 */
+    --color-shadow: rgba(0, 0, 0, 0.4); /* シャドウ色 (濃くする) */
+    --color-slider-fill: #7f8c8d;  /* スライダー未選択の色 */
+}
+
+* {
+    box-sizing: border-box;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease;
+}
+
 body {
-    font-family: 'Noto Sans JP', sans-serif;
-    background-color: #f0f4f8;
-    color: #333;
+    font-family: 'Noto Sans JP', 'Roboto', sans-serif;
     margin: 0;
-    padding: 40px 20px;
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-}
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    padding: 40px 50px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.8s forwards;
-    animation-delay: 0.2s;
-}
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    padding: 0;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
-/* 2. ヘッダーとタイトル */
-h1 {
-    color: #0b6cb5;
-    text-align: center;
-    font-weight: 900;
-    font-size: 2.8em;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-}
-.subtitle {
-    text-align: center;
-    color: #5d6d7e;
-    font-size: 1.1em;
-    margin-bottom: 40px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #0b6cb5;
-    display: inline-block;
+/* ==================================== */
+/* 2. レイアウトとコンテナ */
+/* ==================================== */
+
+.main-container {
     width: 100%;
+    max-width: 700px;
+    padding: 20px;
 }
 
-/* 3. 開始画面 */
-#start-screen {
-    text-align: center;
-    padding: 80px 20px;
-    transition: opacity 0.5s ease-out;
-}
-#start-screen h2 {
-    color: #34495e;
-    font-size: 1.8em;
-    margin-bottom: 30px;
-}
-#start-button {
-    display: inline-block;
-    padding: 20px 40px;
-    background-color: #2ecc71; 
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.5em;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
-}
-#start-button:hover {
-    background-color: #27ae60;
-    transform: translateY(-3px);
-}
-
-/* 4. 質問フォーム */
-#ecl-form {
+.screen {
     display: none;
     opacity: 0;
-    transition: opacity 1.0s ease-in;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    padding: 30px;
+    background-color: var(--color-card-background);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--color-shadow);
 }
-#ecl-form.show {
+
+.screen.active {
+    display: block;
     opacity: 1;
+    transform: translateY(0);
 }
 
-/* 5. 質問グループと質問文 */
-h2 {
-    color: #1a5276;
-    font-size: 1.6em;
-    font-weight: 700;
-    margin-top: 40px;
-    margin-bottom: 20px;
-    padding: 5px 10px;
-    background-color: #eaf2f8;
-    border-left: 6px solid #0b6cb5;
-    border-radius: 4px;
-}
-
-/* 修正: 質問表示をシンプルに */
-.question {
-    padding: 15px 0;
-    opacity: 0;
-    display: none; /* 非アクティブな質問は非表示に */
-    transition: opacity 0.3s ease;
-}
-.question.active {
-    opacity: 1;
-    display: block; /* アクティブな質問を表示 */
-}
-
-.statement {
-    font-weight: 500;
-    margin-bottom: 15px;
-    color: #34495e;
-    font-size: 1.1em;
-    line-height: 1.6;
-}
-
-/* 5-1. ボタン選択肢のスタイル (D軸) */
-.button-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
-}
-.button-options button {
-    padding: 12px 20px;
-    font-size: 1em;
-    font-weight: 500;
-    border: 2px solid #bdc3c7;
-    background-color: #f7f9fb;
-    color: #34495e;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
-}
-.button-options button:hover {
-    background-color: #ecf0f1;
-    border-color: #7f8c8d;
-}
-/* 6. カスタムスライダーデザイン */
-.slider-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-size: 0.85em;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 10px 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-input[type="range"] {
-    flex-grow: 1;
-    margin: 0 15px;
-    -webkit-appearance: none;
-    width: 100%;
-    height: 10px;
-    background: linear-gradient(to right, #e74c3c, #f1c40f, #2ecc71);
-    border-radius: 5px;
-    cursor: pointer;
-    outline: none;
-    transition: transform 0.1s;
-}
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    background: #0b6cb5;
-    border: 4px solid #ffffff;
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-    transition: background 0.3s;
-}
-.score-label {
-    width: 35px;
+#start-screen {
     text-align: center;
-    font-weight: 700;
-    color: #0b6cb5;
-    background-color: #eaf2f8;
-    border-radius: 4px;
-    padding: 3px 0;
-    transition: color 0.3s, background-color 0.3s;
-}
-.min-max-label {
-    color: #777;
-    font-weight: 500;
-    width: 150px;
-    text-align: center;
+    padding: 60px 30px;
 }
 
-/* 7. 診断ボタン */
-.navigation-buttons {
+h1, h2, h3, h4 {
+    font-weight: 700;
+    color: var(--color-text);
+    margin-top: 0;
+}
+
+/* ==================================== */
+/* 3. ボタンとフォーム要素 */
+/* ==================================== */
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05em;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    margin: 5px;
+}
+
+.btn.primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.btn.primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+.btn.secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn.secondary:hover {
+    background-color: var(--color-secondary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+/* ナビゲーション */
+.nav-buttons-container {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-    gap: 10px; /* ボタン間のスペースを追加 */
+    padding: 10px 0;
 }
-.navigation-buttons button {
-    flex-grow: 1;
-    padding: 15px 20px;
-    background-color: #1a5276;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1em;
-    font-weight: 700;
+
+.submit-btn {
+    margin-left: auto; /* 次へボタンがない時に右端に寄せる */
+}
+
+/* ダークモード切り替えボタン */
+.mode-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    font-size: 1.2em;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-.navigation-buttons button:hover:not(:disabled) { /* 無効化されたボタンはホバー効果なし */
-    background-color: #2e86c1;
-    transform: translateY(-2px);
-}
-.navigation-buttons button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-.navigation-buttons #next-btn,
-#submit-btn {
-    background-color: #0b6cb5;
-}
-.navigation-buttons #next-btn:hover:not(:disabled),
-#submit-btn:hover:not(:disabled) {
-    background-color: #0a5b9b;
+    z-index: 1000;
+    box-shadow: 0 2px 5px var(--color-shadow);
 }
 
-/* 8. 結果表示エリア (以下省略。元のCSSとD軸の色以外は同一で問題ありません) */
+/* ==================================== */
+/* 4. 質問とスライダー */
+/* ==================================== */
 
-#results {
-    margin-top: 60px;
-    padding-top: 30px;
-    border-top: 4px solid #0b6cb5;
-    display: none; 
-    text-align: center;
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.8s ease-out, transform 0.5s ease-out;
-}
-#results.show {
-    opacity: 1;
-    transform: scale(1);
-}
-.result-header {
-    font-size: 1.8em;
-    color: #e74c3c; 
-    font-weight: 700;
+.question {
+    padding: 20px 0;
+    border-bottom: 1px dashed var(--color-border);
     margin-bottom: 20px;
-}
-#type-result {
-    font-size: 2.8em;
-    font-weight: 900;
-    color: #0b6cb5;
-    margin-bottom: 15px;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
-}
-#type-description {
-    font-size: 1.15em;
-    color: #4a4a4a;
-    line-height: 1.8;
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #f0f0f0;
-    border-radius: 10px;
-    background-color: #fcfcfc;
+    display: none; /* JSで管理 */
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* 9. スコアサマリーボックス */
-.score-summary {
+.question.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.question h2 {
+    font-size: 1.2em;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+    border-left: 4px solid var(--color-primary);
+    padding-left: 10px;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.min-max-label {
+    font-size: 0.85em;
+    width: 120px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--color-text);
+}
+
+.score-label {
+    width: 40px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-grow: 1;
+    height: 10px;
+    background: var(--color-slider-fill);
+    border-radius: 5px;
+    margin: 0 15px;
+    cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================================== */
+/* 5. D軸 (判断力) テストエリア */
+/* ==================================== */
+
+#decision-area-q31 {
+    background: var(--color-background);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#instruction-display {
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 2px;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed var(--color-border);
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 2.5em !important;
+}
+
+.button-options {
     display: flex;
     justify-content: space-around;
-    gap: 10px; 
-    flex-wrap: wrap; 
-    margin-top: 30px;
 }
-.score-box {
-    padding: 25px;
-    border-radius: 15px;
-    width: 22%; 
-    min-width: 150px;
+
+.button-options button {
+    width: 48%;
+    padding: 20px;
+    font-size: 1.1em;
     font-weight: 700;
-    text-align: left;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    border-radius: 10px;
+    background-color: var(--color-primary);
+    color: white;
 }
-.score-box.show {
-    opacity: 1;
-    transform: translateY(0);
+
+/* ==================================== */
+/* 6. 結果画面 */
+/* ==================================== */
+
+.type-summary-card {
+    text-align: center;
+    padding: 30px;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--color-primary), #6dd5ed);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 150, 255, 0.3);
 }
-.score-box h3 {
-    margin: 0;
-    font-size: 1.0em; 
-    color: #fff;
-    opacity: 0.9;
-    font-weight: 500;
+
+.dark-mode .type-summary-card {
+     background: linear-gradient(135deg, #2c3e50, #4a687f);
+     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.result-type-title {
+    font-size: 2.5em;
+    margin: 10px 0;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+}
+
+.score-box {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--color-background);
+    box-shadow: 0 4px 15px var(--color-shadow);
+    text-align: center;
+    opacity: 0; /* JSでアニメーション制御 */
+    transform: translateY(10px);
+}
+
+.score-box h4 {
+    font-size: 0.9em;
+    color: var(--color-primary);
     margin-bottom: 5px;
 }
+
 .score-value {
-    font-size: 2.0em; 
-    color: #fff;
-    display: inline-block;
-    margin-top: 5px;
-    font-weight: 900;
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--color-text);
 }
-/* 各軸のテーマカラー */
-#e-score { background-color: #e74c3c; transition-delay: 0.1s; } 
-#c-score { background-color: #3498db; transition-delay: 0.2s; } 
-#l-score { background-color: #2ecc71; transition-delay: 0.3s; } 
-#d-score { background-color: #9b59b6; transition-delay: 0.4s; } 
 
-/* 9-1. 安定性指標のスタイル */
 .stability-indicator {
-    display: block;
-    font-size: 0.75em;
-    font-weight: 900;
-    padding: 3px 8px;
-    border-radius: 5px;
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 4px;
     margin-top: 10px;
-    width: fit-content;
-    text-transform: uppercase;
-}
-.stability-indicator.Stable {
-    background-color: #f1c40f; 
-    color: #484848;
-}
-.stability-indicator.Intermediate {
-    background-color: #e67e22; 
-    color: white;
-}
-.stability-indicator.Unstable {
-    background-color: #c0392b; 
-    color: white;
-}
-
-/* 10. 相性結果セクション */
-#compatibility-results {
-    margin-top: 40px;
-    text-align: left;
-    padding: 25px;
-    background-color: #eaf2f8;
-    border-radius: 15px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    transition-delay: 0.5s; 
-}
-#compatibility-results.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-#compatibility-results h3 {
-    color: #0b6cb5;
-    font-size: 1.4em;
-    border-bottom: 2px solid #0b6cb5;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-}
-#compatibility-results p {
-    font-size: 1.0em;
-    line-height: 1.7;
-    margin-bottom: 10px;
-}
-.good-match {
-    color: #e74c3c;
+    display: inline-block;
     font-weight: 700;
 }
-.good-match-description {
-    color: #5d6d7e;
-    font-size: 0.95em;
+
+.stability-indicator.Stable {
+    background-color: #2ecc7130;
+    color: #2ecc71;
 }
 
-/* 11. レスポンシブデザイン */
-@media (max-width: 768px) {
-    body { padding: 20px 10px; }
-    .container { padding: 20px 20px; border-radius: 12px; }
-    h1 { font-size: 2.0em; }
-    .subtitle { font-size: 1.0em; margin-bottom: 30px; }
-    #start-screen { padding: 40px 10px; }
-    #start-button { font-size: 1.3em; padding: 15px 30px; }
-    h2 { font-size: 1.3em; }
-    .statement { font-size: 1.0em; }
-    .slider-container { flex-wrap: wrap; padding: 5px 0; }
-    .min-max-label { width: 45%; font-size: 0.75em; margin-top: 5px; order: 2; }
-    .min-max-label:first-child { text-align: left; }
-    .min-max-label:last-child { text-align: right; }
-    input[type="range"] { width: 100%; margin: 0 0 10px 0; order: 1; }
-    .score-label { order: 3; width: 100%; margin-top: 5px; font-size: 0.9em; }
-    .score-summary { flex-direction: column; gap: 15px; }
-    .score-box { width: 100%; }
-    #type-result { font-size: 1.8em; }
-    .navigation-buttons { gap: 5px; } /* スマホでの隙間を調整 */
-    .navigation-buttons button { font-size: 0.9em; padding: 12px 15px; }
+.stability-indicator.Intermediate {
+    background-color: #f1c40f30;
+    color: #f1c40f;
 }
+
+.stability-indicator.Unstable {
+    background-color: #e74c3c30;
+    color: #e74c3c;
+}
+
+.compatibility-card {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: var(--color-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--color-shadow);
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.good-match {
+    display: inline-block;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-top: 5px;
+}
+.good-match-description {
+    font-size: 0.9em;
+    margin-left: 10px;
+    color: #7f8c8d;
+}
+
+/* ==================================== */
+/* 7. アニメーションユーティリティ */
+/* ==================================== */
+
+/* フェードイン・アップアニメーション */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.fade-in-up {
+    animation-name: fadeInUp;
+    animation-duration: 0.6s;
+    animation-fill-mode: both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
